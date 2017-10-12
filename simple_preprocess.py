@@ -16,7 +16,7 @@ def photo_neg(img_np):
 def thres_binary(img_np, thres):
     '''Binarizes a grey-scale image based on a given threshold value between 0
     and 255'''
-    img_np_bin = (img_np > thres)* 255
+    img_np_bin = (img_np > thres)* 1
     plt.figure()
     plt.imshow(img_np_bin, cmap = 'gray')
     plt.show(block = False)

@@ -8,7 +8,8 @@ def read_image(filename):
     values'''
     img_np = misc.imread(filename, mode = 'L') #Reads the image n 8 bit pixels,
     #black and white mode
-    plt.figure()
+    fig = plt.figure()
     plt.imshow(img_np, cmap = 'gray')
-    plt.show(block = False) #keyword 'block' overrides blocking behaviour
+    plt.ion()
+    plt.show() #keyword 'block' overrides blocking behaviour
     return img_np
