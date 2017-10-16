@@ -15,38 +15,36 @@ def find_fg_points(matrix, fg_val=0):
 
     return fg_list
 
-def flood_fill(matrix,point,shape_points):
-    x = point[0]
-    y = point[1]
-    shape_points.append((x,y))
-    matrix[x][y] = 1
-    if x + 1 < (matrix.shape[0]) and matrix[x + 1,y] == 0:
-        flood_fill(matrix, (x+1,y), shape_points)
-    if x - 1 >= 0 and matrix[x - 1,y] == 0:
-        flood_fill(matrix, (x - 1,y), shape_points)
-    if y + 1 < (matrix.shape[1]) and matrix[x,y + 1] == 0:
-        flood_fill(matrix, (x, y + 1), shape_points)
-    if y - 1 >= 0  and matrix[x,y - 1] == 0:
-        flood_fill(matrix, (x, y - 1), shape_points)
-    return matrix, shape_points
-
-def find_shapes(matrix):
+def find_shapes(matrix, fg_val):
     m = np.copy(matrix)
-    ind = np.where(m == 0)
-    x,y = ind[0][0],ind[1][0]
-    shape_points = []
+    fg = find_fg_points(m, fg_val)
     num_rows, num_cols = m.shape
-    shape_points = flood_fill2(m, num_rows, num_cols, x, y)
-    return shape_points
+    shapes = []
+    indTest = []
+    while True:
+        shape_points = []
+        shapesFlat = [item for sublist in shapes for item in sublist]
+        indTest = [element for element in fg if element not in shapesFlat]
+        print(len(indTest))
+        x,y = indTest[0][0],indTest[0][1]
+        shape_points = flood_fill(m, num_rows, num_cols, x, y, shape_points, fg_val)
+        shapes.append(shape_points)
+        if len(indTest) == 0:
+            break
+    return shapes
 
-def flood_fill2(data, num_rows, num_cols, row_start, col_start):
+def flood_fill(data, num_rows, num_cols, row_start, col_start, shape_points, fg_val):
     stack = [(row_start, col_start)]
 
     while stack:
         (row, col), *stack = stack
 
-        if data[row, col] == 0:
-            data[row, col] = 1
+        if data[row, col] == fg_val:
+            shape_points.append((row,col))
+            if fg_val == 0:
+                data[row, col] = 1
+            elif fg_val == 1:
+                data[row, col] = 0
             if row > 0:
                 stack.append((row-1, col))
                 if col > 0:
@@ -63,4 +61,4 @@ def flood_fill2(data, num_rows, num_cols, row_start, col_start):
                 stack.append((row, col-1))
             if col < (num_cols-1):
                 stack.append((row, col-1))
-    return data
+    return shape_points
