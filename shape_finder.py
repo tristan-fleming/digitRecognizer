@@ -23,14 +23,18 @@ def find_shapes(matrix, fg_val):
     indTest = []
     while True:
         shape_points = []
+        indTest = []
         shapesFlat = [item for sublist in shapes for item in sublist]
-        indTest = [element for element in fg if element not in shapesFlat]
-        print(len(indTest))
+        shapesFlatSet = set(shapesFlat)
+        indTest = [element for element in fg if element not in shapesFlatSet]
+        if len(indTest) == 0:
+            break
+        if len(shapesFlat) + len(indTest) != len(fg):
+            print("Error in shape finding!")
+            break
         x,y = indTest[0][0],indTest[0][1]
         shape_points = flood_fill(m, num_rows, num_cols, x, y, shape_points, fg_val)
         shapes.append(shape_points)
-        if len(indTest) == 0:
-            break
     return shapes
 
 def flood_fill(data, num_rows, num_cols, row_start, col_start, shape_points, fg_val):
@@ -47,18 +51,18 @@ def flood_fill(data, num_rows, num_cols, row_start, col_start, shape_points, fg_
                 data[row, col] = 0
             if row > 0:
                 stack.append((row-1, col))
-                if col > 0:
+                if col > 0 & fg_val == 0:
                     stack.append((row-1, col-1))
-                if col < (num_cols-1):
+                if col < (num_cols-1) & fg_val == 0:
                     stack.append((row-1, col+1))
             if row < (num_rows -1):
                 stack.append((row+1, col))
-                if col > 0:
+                if col > 0 & fg_val == 0:
                     stack.append((row+1, col-1))
-                if col < (num_cols-1):
+                if col < (num_cols-1) & fg_val == 0:
                     stack.append((row+1, col+1))
             if col > 0:
                 stack.append((row, col-1))
             if col < (num_cols-1):
-                stack.append((row, col-1))
+                stack.append((row, col+1))
     return shape_points

@@ -1,6 +1,7 @@
 import numpy as np
 import scipy as sc
 import skimage as sk
+from skimage.measure import block_reduce
 from scipy import misc
 import matplotlib.pyplot as plt
 
@@ -21,3 +22,10 @@ def thres_binary(img_np, thres):
     plt.imshow(img_np_bin, cmap = 'gray')
     plt.show(block = False)
     return img_np_bin
+
+def downsample(img_np, x_scale, y_scale, funct):
+    '''Downsamples image by x_scale along x-axis and y_scale along y-axis
+    according to the function funct'''
+    block_size = (x_scale, y_scale)
+    img_np_ds = sk.measure.block_reduce(img_np, block_size, funct)
+    return img_np_ds
