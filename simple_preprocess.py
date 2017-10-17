@@ -4,6 +4,7 @@ import skimage as sk
 from skimage.measure import block_reduce
 from scipy import misc
 import matplotlib.pyplot as plt
+import image_open as io
 
 def photo_neg(img_np):
     '''Calculates and displays a photographic negative of a numpy array of pixel
@@ -26,6 +27,14 @@ def thres_binary(img_np, thres):
 def downsample(img_np, x_scale, y_scale, funct):
     '''Downsamples image by x_scale along x-axis and y_scale along y-axis
     according to the function funct'''
-    block_size = (x_scale, y_scale)
+    block_size = (y_scale, x_scale)
     img_np_ds = sk.measure.block_reduce(img_np, block_size, funct)
     return img_np_ds
+
+def run_image_preprocess(filename):
+    img_np = io.read_image(filename)
+    (num_rows, num_cols) = img_np.shape
+    scale = int(np.ceil(float(max(num_cols, num_rows))/500))
+    img_np_ds = downsample(img_np, scale, scale, np.mean)
+    img_np_bin = thres_binary(img_np_ds, 128)
+    return img_np_bin
