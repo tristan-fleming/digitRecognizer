@@ -23,6 +23,18 @@ def find_edge_points(matrix, fg_val=1):
 
     return edge_pts
 
+def find_fg_points(matrix, fg_val=0):
+    """Returns all "foreground points"
+    of a given 2-D numpy matrix. Foreground value defaults to 1 (white), use
+    a value of 0 if the slicer ouputs black."""
+    fg_list = []
+
+    for (index, point) in np.ndenumerate(matrix):
+        if (point == fg_val):
+            fg_list.append(index)
+
+    return fg_list
+
 def find_list_difference(total_list, removal_list):
     """Returns a list of the set difference between the total list and removal
     list. This assumes that order doesn't matter, and that every point is unique
@@ -148,8 +160,8 @@ def coords2array(coords):
     maxX = max(col)
     minY = min(row)
     maxY = max(row)
-    row_zeroed = row - min(row)
-    col_zeroed = col - min(col)
+    row_zeroed = [x - min(row) for x in row]
+    col_zeroed = [y - min(col) for y in col]
     coords_zeroed = list(zip(row_zeroed, col_zeroed))
     coords_array = np.full(((maxY - minY + 1),(maxX - minX + 1)),0)
     for i,(row,col) in enumerate(coords_zeroed):

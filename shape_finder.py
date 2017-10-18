@@ -15,9 +15,10 @@ def find_fg_points(matrix, fg_val=0):
 
     return fg_list
 
-def find_shapes(matrix, fg_val):
+def find_shapes(matrix, val):
+    '''Finds shapes defined by connected regions of points with value val.'''
     m = np.copy(matrix)
-    fg = find_fg_points(m, fg_val)
+    fg = find_fg_points(m, val)
     num_rows, num_cols = m.shape
     shapes = []
     indTest = []

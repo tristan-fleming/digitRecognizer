@@ -99,7 +99,7 @@ def find_notches(lines, threshold_dist, threshold_angle):
     by the Hough transform function for pairs of lines that have points within
     the threshold threshold_dist of each other and that make an angle less than
     the threshold threshold_angle with each other.'''
-    neighbors = []
+    notch_pairs = []
     slope = coords2slope(lines)
     #line_coords_flat = [item for sublist in lines for item in sublist]
     for ind1, (line1_pt1, line1_pt2) in enumerate(lines):
@@ -113,8 +113,8 @@ def find_notches(lines, threshold_dist, threshold_angle):
                         theta1 = np.degrees(np.arctan((slope[ind1]-slope[ind2])/(1 + slope[ind1]*slope[ind2])))
                         theta2 = 180 - abs(theta1)
                         if max(abs(theta1), abs(theta2)) < threshold_angle:
-                            neighbors.append((ind1,ind2))
-    return neighbors
+                            notch_pairs.append((ind1,ind2))
+    return notch_pairs
 
 def hough_ellipse_transform(edge_pts):
     # Perform a Hough Transform
@@ -151,3 +151,9 @@ def num_holes(img_np):
             num_not_shapes += 1
     num_holes = len(bg_shapes) - 1 - num_not_shapes
     return num_holes
+
+def lines(img_np):
+    edge_pts = ef.find_edge_points(img_np,0)
+    lines = hough_line_transform(edge_pts)
+    notch_pairs = find_notches(lines, 4, 120)
+    return lines, notch_pairs
