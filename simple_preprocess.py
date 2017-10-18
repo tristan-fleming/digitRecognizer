@@ -10,6 +10,9 @@ def photo_neg(img_np):
     values'''
     img_np_neg = 255 - img_np
     plt.figure()
+    ax = plt.gca()
+    ax.set_xlim((0, img_np.shape[1]))
+    ax.set_ylim((img_np.shape[0], 0))
     plt.imshow(img_np_neg, cmap = 'gray')
     plt.show(block = False)
     return img_np_neg
@@ -19,6 +22,9 @@ def thres_binary(img_np, thres):
     and 255'''
     img_np_bin = (img_np > thres)*1
     plt.figure()
+    ax = plt.gca()
+    ax.set_xlim((0, img_np_bin.shape[1]))
+    ax.set_ylim((img_np_bin.shape[0], 0))
     plt.imshow(img_np_bin, cmap = 'gray')
     plt.show(block = False)
     return img_np_bin

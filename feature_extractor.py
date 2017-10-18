@@ -1,22 +1,24 @@
 import numpy as np
 from scipy import misc
 import matplotlib.pyplot as plt
+from matplotlib import cm
 from skimage.transform import (hough_line, hough_line_peaks,
                                probabilistic_hough_line, hough_ellipse)
 from skimage import data, color
 from skimage.draw import ellipse_perimeter
 
-from matplotlib import cm
 import edge_finder as ef
 import shape_finder as sf
 import simple_preprocess as sp
+import complex_preprocess as cp
 import helpers as h
 
-def bounding_box(coords):
+def bounding_box(img_np):
     '''Finds the bounding box of the given coordinates, i.e. the minimum size
     box that encloses all of the given coordinates. Also returns the blackness
     and aspect ratio of the bounding box.'''
-    row,col = zip(*coords)
+    fg = sf.find_fg_points(img_np, 0)
+    col,row = zip(*fg)
     maxX = max(col)
     minX = min(col)
     maxY = max(row)
@@ -24,39 +26,58 @@ def bounding_box(coords):
     aspectRatio = (maxY - minY +1) / (maxX - minX + 1)
     boundingBox = [(minY, minX), (minY, maxX), (maxY, maxX), (maxY, minX), (minY, minX)]
     yBox, xBox = zip(*boundingBox)
-    blacknessRatio = len(coords)/((maxX - minX)*(maxY - minY))
-    plt.scatter(x,y,marker=',')
-    plt.plot(xBox, yBox, 'b-')
+    blacknessRatio = len(fg)/((maxX - minX)*(maxY - minY))
+    plt.figure()
+    plt.scatter(row, col, marker=',')
+    plt.plot(yBox, xBox, 'b-')
+    ax = plt.gca()
+    ax.set_xlim((0, img_np.shape[1]))
+    ax.set_ylim((img_np.shape[0], 0))
     plt.show()
     col_dim = maxX - minX
     row_dim = maxY - minY
-    return blacknessRatio, aspectRatio, row_dim, col_dim
+    return blacknessRatio, aspectRatio, boundingBox
 
+def quadrant_bounding_box(img):
+    '''Finds the blackness ratio, aspect ratio, and bounding box for each of the
+    four quadrants of the digit img'''
+    bb = bounding_box(img)
+    img_np = img[bb[2][0][1]: bb[2][1][1], bb[2][0][0]:bb[2][2][0]]
+    [num_rows, num_cols] = img_np.shape
+    img_np_1 = img_np[0:int(round(num_rows/2)), 0:int(round(num_cols/2))]
+    img_np_2 = img_np[0:int(round(num_rows/2)), int(round(num_cols/2)):num_cols]
+    img_np_3 = img_np[int(round(num_rows/2)):num_rows, 0:int(round(num_cols/2))]
+    img_np_4 = img_np[int(round(num_rows/2)):num_rows, int(round(num_cols/2)):num_cols]
+    bb1 = bounding_box(img_np_1)
+    bb2 = bounding_box(img_np_2)
+    bb3 = bounding_box(img_np_3)
+    bb4 = bounding_box(img_np_4)
+    return bb1, bb2, bb3, bb4
 
-def hough_line_transform(edge_pts):
+def hough_line_transform(img_np):
     '''Calculates the Hough line transform of a list of edge points edge_pts.
     The Hough line transform maps each point in the list of edge points to a
     curve in r-theta space, where r is the shortest distance from a line
     intersecting the edge point to the origin and theta is the angle of that
     line.'''
-    edge_pts_loc = ef.coords2array(edge_pts)
+    skeleton = cp.find_skeleton(img_np)
     #edge_pts_loc = edge_pts
-    lines = probabilistic_hough_line(edge_pts_loc, threshold=10, line_length=5,
+    lines = probabilistic_hough_line(skeleton, threshold=10, line_length=5,
                                  line_gap=3)
 
     # Generating figure 2
     fig, axes = plt.subplots(1, 2, figsize=(10, 5), sharex=True, sharey=True)
     ax = axes.ravel()
 
-    ax[0].imshow(edge_pts_loc, cmap=cm.gray)
+    ax[0].imshow(skeleton, cmap=cm.gray)
     ax[0].set_title('Input image')
 
-    ax[1].imshow(edge_pts_loc, cmap=cm.gray)
+    ax[1].imshow(skeleton, cmap=cm.gray)
     for line in lines:
         p0, p1 = line
         ax[1].plot((p0[0], p1[0]), (p0[1], p1[1]))
-    ax[1].set_xlim((0, edge_pts_loc.shape[1]))
-    ax[1].set_ylim((edge_pts_loc.shape[0], 0))
+    ax[1].set_xlim((0, skeleton.shape[1]))
+    ax[1].set_ylim((skeleton.shape[0], 0))
     ax[1].set_title('Probabilistic Hough')
 
     for a in ax:
@@ -161,10 +182,9 @@ def num_holes(img_np):
     num_holes = len(bg_shapes) - 1 - num_not_shapes
     return num_holes
 
-def lines(img_np):
+def line_features(img_np):
     '''Finds the lines that make up the edge points in the digit and the notch
     pairs along those edges.'''
-    edge_pts = ef.find_edge_points(img_np,0)
-    lines = hough_line_transform(edge_pts)
+    lines = hough_line_transform(img_np)
     notch_pairs = find_notches(lines, 4, 120)
     return lines, notch_pairs
