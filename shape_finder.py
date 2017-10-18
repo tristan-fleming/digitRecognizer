@@ -1,5 +1,4 @@
 import numpy as np
-import scipy as sc
 from scipy import misc
 import matplotlib.pyplot as plt
 
@@ -34,33 +33,33 @@ def find_shapes(matrix, val):
             print("Error in shape finding!")
             break
         x,y = indTest[0][0],indTest[0][1]
-        shape_points = flood_fill(m, num_rows, num_cols, x, y, shape_points, fg_val)
+        shape_points = flood_fill(m, num_rows, num_cols, x, y, shape_points, val)
         shapes.append(shape_points)
     return shapes
 
-def flood_fill(data, num_rows, num_cols, row_start, col_start, shape_points, fg_val):
+def flood_fill(data, num_rows, num_cols, row_start, col_start, shape_points, val):
     stack = [(row_start, col_start)]
 
     while stack:
         (row, col), *stack = stack
 
-        if data[row, col] == fg_val:
+        if data[row, col] == val:
             shape_points.append((row,col))
-            if fg_val == 0:
+            if val == 0:
                 data[row, col] = 1
-            elif fg_val == 1:
+            elif val == 1:
                 data[row, col] = 0
             if row > 0:
                 stack.append((row-1, col))
-                if col > 0 & fg_val == 0:
+                if col > 0 & val == 0:
                     stack.append((row-1, col-1))
-                if col < (num_cols-1) & fg_val == 0:
+                if col < (num_cols-1) & val == 0:
                     stack.append((row-1, col+1))
             if row < (num_rows -1):
                 stack.append((row+1, col))
-                if col > 0 & fg_val == 0:
+                if col > 0 & val == 0:
                     stack.append((row+1, col-1))
-                if col < (num_cols-1) & fg_val == 0:
+                if col < (num_cols-1) & val == 0:
                     stack.append((row+1, col+1))
             if col > 0:
                 stack.append((row, col-1))

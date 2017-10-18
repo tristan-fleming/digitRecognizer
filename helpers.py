@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+from scipy import misc
 
 def plot_points(arr):
     """ Plots a scatter plot from a list of tuples """

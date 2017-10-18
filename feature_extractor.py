@@ -1,8 +1,6 @@
 import numpy as np
-import scipy as sc
 from scipy import misc
 import matplotlib.pyplot as plt
-import helpers as h
 from skimage.transform import (hough_line, hough_line_peaks,
                                probabilistic_hough_line, hough_ellipse)
 from skimage import data, color
@@ -12,6 +10,7 @@ from matplotlib import cm
 import edge_finder as ef
 import shape_finder as sf
 import simple_preprocess as sp
+import helpers as h
 
 def bounding_box(coords):
     '''Finds the bounding box of the given coordinates, i.e. the minimum size
@@ -35,11 +34,13 @@ def bounding_box(coords):
 
 
 def hough_line_transform(edge_pts):
-    '''Calculates the Hough line transform of a list of edge points. The Hough
-    line transform maps each point in the list of edge points to a curve in
-    r-theta space, where r is the shortest distance from a line intersecting the
-    edge point to the origin and theta is the angle of that line.'''
+    '''Calculates the Hough line transform of a list of edge points edge_pts.
+    The Hough line transform maps each point in the list of edge points to a
+    curve in r-theta space, where r is the shortest distance from a line
+    intersecting the edge point to the origin and theta is the angle of that
+    line.'''
     edge_pts_loc = ef.coords2array(edge_pts)
+    #edge_pts_loc = edge_pts
     lines = probabilistic_hough_line(edge_pts_loc, threshold=10, line_length=5,
                                  line_gap=3)
 
@@ -117,6 +118,11 @@ def find_notches(lines, threshold_dist, threshold_angle):
     return notch_pairs
 
 def hough_ellipse_transform(edge_pts):
+    '''Calculates the Hough ellipse transform of the list of edge points
+    edge_pts. The Hough ellipse transform follows a similar procedure to the
+    Hough line transform except instead of transforming each edge point to a
+    point in r-theta space, it transforms pairs of edge points to a point in
+    the 5D space defining various ellipses: yc, xc, a, b, orientation.'''
     # Perform a Hough Transform
     # The accuracy corresponds to the bin size of a major axis.
     # The value is chosen in order to get a single high accumulator.
@@ -140,6 +146,9 @@ def hough_ellipse_transform(edge_pts):
     return cy, cx
 
 def num_holes(img_np):
+    '''Finds the number of holes in a digit based on the number of connected
+    background and foreground regions. Assumes that the foreground is completely
+    surrounded by a background region.'''
     bg_shapes = sf.find_shapes(img_np, 1)
     fg_shapes = sf.find_shapes(img_np, 0)
     num_not_shapes = 0
@@ -153,6 +162,8 @@ def num_holes(img_np):
     return num_holes
 
 def lines(img_np):
+    '''Finds the lines that make up the edge points in the digit and the notch
+    pairs along those edges.'''
     edge_pts = ef.find_edge_points(img_np,0)
     lines = hough_line_transform(edge_pts)
     notch_pairs = find_notches(lines, 4, 120)
