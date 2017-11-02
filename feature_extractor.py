@@ -170,8 +170,8 @@ def num_holes(img_np):
     '''Finds the number of holes in a digit based on the number of connected
     background and foreground regions. Assumes that the foreground is completely
     surrounded by a background region.'''
-    bg_shapes = sf.find_shapes(img_np, 1)
-    fg_shapes = sf.find_shapes(img_np, 0)
+    bg_shapes = sf.find_shapes(img_np, 0)
+    fg_shapes = sf.find_shapes(img_np, 1)
     num_not_shapes = 0
     if len(fg_shapes) > 1:
         print('Disconnected digit!')

@@ -8,7 +8,7 @@ import image_open as io
 def photo_neg(img_np):
     '''Calculates and displays a photographic negative of a numpy array of pixel
     values'''
-    img_np_neg = 255 - img_np
+    img_np_neg = 1 - img_np
     plt.figure()
     ax = plt.gca()
     ax.set_xlim((0, img_np.shape[1]))
