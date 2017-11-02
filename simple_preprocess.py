@@ -40,7 +40,10 @@ def run_image_preprocess(filename):
     '''Runs the above pre-processing steps on the image file "filename"'''
     img_np = io.read_image(filename) #dtype = 'uint8'
     (num_rows, num_cols) = img_np.shape
-    scale = int(np.ceil(float(max(num_cols, num_rows))/500))
-    img_np_ds = downsample(img_np, scale, scale, np.mean) #dtype = 'float64'
+    if num_rows > 500 or num_cols > 500:
+        scale = int(np.ceil(float(max(num_cols, num_rows))/500))
+        img_np_ds = downsample(img_np, scale, scale, np.mean) #dtype = 'float64'
+    else:
+        img_np_ds = img_np
     img_np_bin = thres_binary(img_np_ds, 128) #dtype = 'int32'
     return img_np_bin
