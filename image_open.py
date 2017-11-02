@@ -1,6 +1,6 @@
 from scipy import misc
 import matplotlib.pyplot as plt
-import cPickle, gzip
+import pickle, gzip
 
 def read_image(filename):
     '''Reads image file, plots the image, and returns numpy array of pixel
@@ -13,8 +13,8 @@ def read_image(filename):
     plt.show() #keyword 'block' overrides blocking behaviour
     return img_np
 
-def read_MNIST:
+def read_MNIST():
     f = gzip.open('mnist.pkl.gz', 'rb')
-    train_set, valid_set, test_set = cPickle.load(f)
+    train_set, valid_set, test_set = pickle.load(f, encoding = 'iso-8859-1')
     f.close()
     return train_set, valid_set, test_set
