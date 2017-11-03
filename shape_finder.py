@@ -30,7 +30,7 @@ def find_shapes(matrix, val):
         if len(indTest) == 0:
             break
         if len(shapesFlat) + len(indTest) != len(fg):
-            print("Error in shape finding!")
+            #print("Error in shape finding!")
             break
         x,y = indTest[0][0],indTest[0][1]
         shape_points = flood_fill(m, num_rows, num_cols, x, y, shape_points, val)

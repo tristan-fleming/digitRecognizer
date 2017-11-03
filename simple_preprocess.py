@@ -21,12 +21,12 @@ def thres_binary(img_np, thres):
     '''Binarizes a grey-scale image based on a given threshold value between 0
     and 255'''
     img_np_bin = (img_np > thres)*1
-    plt.figure()
-    ax = plt.gca()
-    ax.set_xlim((0, img_np_bin.shape[1]))
-    ax.set_ylim((img_np_bin.shape[0], 0))
-    plt.imshow(img_np_bin, cmap = 'gray')
-    plt.show(block = False)
+    #plt.figure()
+    #ax = plt.gca()
+    #ax.set_xlim((0, img_np_bin.shape[1]))
+    #ax.set_ylim((img_np_bin.shape[0], 0))
+    #plt.imshow(img_np_bin, cmap = 'gray')
+    #plt.show(block = False)
     return img_np_bin
 
 def downsample(img_np, x_scale, y_scale, funct):
@@ -47,3 +47,7 @@ def run_image_preprocess(filename):
         img_np_ds = img_np
     img_np_bin = thres_binary(img_np_ds, 128) #dtype = 'int32'
     return img_np_bin
+
+def run_image_preprocess_MNIST(np_list_MNISTimgs):
+    proc_imgs = [thres_binary(x, 0.5) for x in np_list_MNISTimgs]
+    return proc_imgs

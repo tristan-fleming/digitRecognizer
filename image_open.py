@@ -30,4 +30,6 @@ def MNIST_plotter(MNIST_img):
 
 def MNIST_sort(MNIST_dataset, digit):
     digit_imgs = [x for i,x in enumerate(MNIST_dataset[0]) if MNIST_dataset[1][i] == digit]
-    return digit_imgs
+    indices = [i for i,x in enumerate(MNIST_dataset[0]) if MNIST_dataset[1][i] == digit]
+    digit_imgs_np = [np.array(x).reshape(28,28) for x in digit_imgs]
+    return digit_imgs_np, indices

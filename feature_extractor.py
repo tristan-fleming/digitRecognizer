@@ -17,26 +17,26 @@ def bounding_box(img_np):
     '''Finds the bounding box of the given coordinates, i.e. the minimum size
     box that encloses all of the given coordinates. Also returns the blackness
     and aspect ratio of the bounding box.'''
-    fg = sf.find_fg_points(img_np, 0)
-    col,row = zip(*fg)
+    fg = sf.find_fg_points(img_np, 1)
+    row, col = zip(*fg)
     maxX = max(col)
     minX = min(col)
     maxY = max(row)
     minY = min(row)
     aspectRatio = (maxY - minY +1) / (maxX - minX + 1)
-    boundingBox = [(minY, minX), (minY, maxX), (maxY, maxX), (maxY, minX), (minY, minX)]
+    boundingBox = [(minX, minY), (minX, maxY), (maxX, maxY), (maxX, minY), (minX, minY)]
     yBox, xBox = zip(*boundingBox)
-    blacknessRatio = len(fg)/((maxX - minX)*(maxY - minY))
-    plt.figure()
-    plt.scatter(row, col, marker=',')
-    plt.plot(yBox, xBox, 'b-')
-    ax = plt.gca()
-    ax.set_xlim((0, img_np.shape[1]))
-    ax.set_ylim((img_np.shape[0], 0))
-    plt.show()
+    blacknessRatio = len(fg)/((maxX - minX + 1 )*(maxY - minY + 1))
+    #plt.figure()
+    #plt.scatter(col, row, marker=',')
+    #plt.plot(yBox, xBox, 'b-')
+    #ax = plt.gca()
+    #ax.set_xlim((0, img_np.shape[1]))
+    #ax.set_ylim((img_np.shape[0], 0))
+    #plt.show()
     col_dim = maxX - minX
     row_dim = maxY - minY
-    return blacknessRatio, aspectRatio, boundingBox
+    return blacknessRatio
 
 def quadrant_bounding_box(img):
     '''Finds the blackness ratio, aspect ratio, and bounding box for each of the
@@ -188,3 +188,8 @@ def line_features(img_np):
     lines = hough_line_transform(img_np)
     notch_pairs = find_notches(lines, 4, 120)
     return lines, notch_pairs
+
+def features_MNIST(np_list_imgs_MNIST):
+    blacknessRatio = [bounding_box(x) for x in np_list_imgs_MNIST]
+    fg_shapes = [len(sf.find_shapes(x,0)) for x in np_list_imgs_MNIST]
+    return blacknessRatio, fg_shapes
