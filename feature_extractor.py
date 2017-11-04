@@ -175,15 +175,15 @@ def num_holes(img_np):
     bg_shapes = sf.get_shapes(bg, 4)
     fg_shapes = sf.get_shapes(fg, 8)
 
-    #num_err_shapes_bg = 0
-    #num_err_shapes_fg = 0
-    #for shape in bg_shapes:
-    #    if len(shape) < 3:
-    #        num_err_shapes_bg = num_err_shapes_bg + 1
+    num_err_shapes_bg = 0
+    num_err_shapes_fg = 0
+    for shape in bg_shapes:
+        if len(shape) < 3:
+            num_err_shapes_bg = num_err_shapes_bg + 1
 
-    #for shape in fg_shapes:
-    #    if len(shape) < 3:
-    #        num_err_shapes_fg = num_err_shapes_fg + 1
+    for shape in fg_shapes:
+        if len(shape) < 3:
+            num_err_shapes_fg = num_err_shapes_fg + 1
 
     #if num_fg_shapes > 1:
         #print("Disconnected digit!")
@@ -197,7 +197,7 @@ def num_holes(img_np):
     else:
         num_fg_shapes = len(fg_shapes)
 
-    num_holes = num_bg_shapes - num_fg_shapes
+    num_holes = (num_bg_shapes-num_err_shapes_bg) - (num_fg_shapes-num_err_shapes_fg)
     return num_holes
 
 def line_features(img_np):
@@ -207,7 +207,10 @@ def line_features(img_np):
     notch_pairs = find_notches(lines, 4, 120)
     return lines, notch_pairs
 
-def features_MNIST(np_list_imgs_MNIST_thres1, np_list_imgs_MNIST_thres2):
-    blacknessRatio = [bounding_box(x) for x in np_list_imgs_MNIST_thres1]
+def features_MNIST(np_list_imgs_MNIST):
+#def features_MNIST(np_list_imgs_MNIST_thres1, np_list_imgs_MNIST_thres2):
+    blacknessRatio = [bounding_box(x) for x in np_list_imgs_MNIST]
+    #blacknessRatio = [bounding_box(x) for x in np_list_imgs_MNIST_thres1]
+    holes = [num_holes(x) for x in np_list_imgs_MNIST]
     #holes = [num_holes(x) for x in np_list_imgs_MNIST_thres2]
     return blacknessRatio, holes

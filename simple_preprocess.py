@@ -2,7 +2,7 @@ import numpy as np
 from skimage.measure import block_reduce
 import matplotlib.pyplot as plt
 from scipy import misc
-from skimage.filters import threshold_otsu, threshold_local
+from skimage.filters import threshold_otsu, threshold_local, threshold_minimum
 
 import image_open as io
 import complex_preprocess as cp
@@ -60,6 +60,20 @@ def thres_binary_loc(img_np):
     #plt.show(block = False)
     return img_np_bin
 
+def thres_binary_min(img_np):
+    '''Binarizes a grey-scale image based on a given threshold value between 0
+    and 255'''
+    thres = threshold_minimum(img_np)
+    img_np_bin = img_np >= thres
+    #img_np_bin = photo_neg(img_np_bin)
+    #plt.figure()
+    #ax = plt.gca()
+    #ax.set_xlim((0, img_np_bin.shape[1]))
+    #ax.set_ylim((img_np_bin.shape[0], 0))
+    #plt.imshow(img_np_bin, cmap = 'gray')
+    #plt.show(block = False)
+    return img_np_bin
+
 def downsample(img_np, x_scale, y_scale, funct):
     '''Downsamples image by x_scale along x-axis and y_scale along y-axis
     according to the function funct'''
@@ -80,6 +94,8 @@ def run_image_preprocess(filename):
     return img_np_bin
 
 def run_image_preprocess_MNIST(np_list_MNISTimgs):
-    proc_imgs_thres1 = [thres_binary_otsu(x) for x in np_list_MNISTimgs]
-    proc_imgs_thres2 = [thres_binary_loc(x) for x in np_list_MNISTimgs]
-    return proc_imgs_thres1, proc_imgs_thres2
+    #proc_imgs_thres1 = [thres_binary_otsu(x) for x in np_list_MNISTimgs]
+    #proc_imgs_thres2 = [thres_binary_loc(x) for x in np_list_MNISTimgs]
+    proc_imgs = [thres_binary_min(x) for x in np_list_MNISTimgs]
+    #return proc_imgs_thres1, proc_imgs_thres2
+    return proc_imgs
