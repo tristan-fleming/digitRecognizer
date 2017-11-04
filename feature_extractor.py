@@ -170,16 +170,34 @@ def num_holes(img_np):
     '''Finds the number of holes in a digit based on the number of connected
     background and foreground regions. Assumes that the foreground is completely
     surrounded by a background region.'''
-    bg_shapes = sf.find_shapes(img_np, 0)
-    fg_shapes = sf.find_shapes(img_np, 1)
-    num_not_shapes = 0
+    fg = sf.find_fg_points(img_np, 1)
+    bg = sf.find_fg_points(img_np, 0)
+    bg_shapes = sf.get_shapes(bg, 4)
+    fg_shapes = sf.get_shapes(fg, 8)
+
+    #num_err_shapes_bg = 0
+    #num_err_shapes_fg = 0
+    #for shape in bg_shapes:
+    #    if len(shape) < 3:
+    #        num_err_shapes_bg = num_err_shapes_bg + 1
+
+    #for shape in fg_shapes:
+    #    if len(shape) < 3:
+    #        num_err_shapes_fg = num_err_shapes_fg + 1
+
+    #if num_fg_shapes > 1:
+        #print("Disconnected digit!")
+    if len(bg_shapes) > 3:
+        num_bg_shapes = 3
+    else:
+        num_bg_shapes = len(bg_shapes)
+
     if len(fg_shapes) > 1:
-        print('Disconnected digit!')
-    for ind, shape in enumerate(bg_shapes):
-        if len(shape) < 4:
-            print('Flood fill missed a couple points!')
-            num_not_shapes += 1
-    num_holes = len(bg_shapes) - 1 - num_not_shapes
+        num_fg_shapes = 1
+    else:
+        num_fg_shapes = len(fg_shapes)
+
+    num_holes = num_bg_shapes - num_fg_shapes
     return num_holes
 
 def line_features(img_np):
@@ -189,7 +207,7 @@ def line_features(img_np):
     notch_pairs = find_notches(lines, 4, 120)
     return lines, notch_pairs
 
-def features_MNIST(np_list_imgs_MNIST):
-    blacknessRatio = [bounding_box(x) for x in np_list_imgs_MNIST]
-    fg_shapes = [len(sf.find_shapes(x,0)) for x in np_list_imgs_MNIST]
-    return blacknessRatio, fg_shapes
+def features_MNIST(np_list_imgs_MNIST_thres1, np_list_imgs_MNIST_thres2):
+    blacknessRatio = [bounding_box(x) for x in np_list_imgs_MNIST_thres1]
+    #holes = [num_holes(x) for x in np_list_imgs_MNIST_thres2]
+    return blacknessRatio, holes

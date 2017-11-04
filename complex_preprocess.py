@@ -5,17 +5,17 @@ from scipy import misc
 from skimage.morphology import skeletonize
 from skimage import data, img_as_bool, morphology
 from skimage.util import invert
-from skimage.filters import threshold_local
+from skimage.filters import threshold_niblack
 
 import simple_preprocess as sp
 
-def thres_loc(img_np, loc_blocksize, loc_method):
+def thres_loc(img_np, loc_blocksize):
     '''Adaptive thresholding. Threshold value is the weighted mean for the local
     neighborhood of a pixel subtracted by some constant'''
-    img_np_loc = threshold_local(img_np, loc_blocksize, loc_method)
-    plt.figure()
-    plt.imshow(img_np_loc, cmap = 'gray')
-    plt.show(block = False)
+    img_np_loc = threshold_niblack(img_np, loc_blocksize, k=0.2)
+    #plt.figure()
+    #plt.imshow(img_np_loc, cmap = 'gray')
+    #plt.show(block = False)
     return img_np_loc
 
 def find_skeleton(img_np):

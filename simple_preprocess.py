@@ -2,25 +2,56 @@ import numpy as np
 from skimage.measure import block_reduce
 import matplotlib.pyplot as plt
 from scipy import misc
+from skimage.filters import threshold_otsu, threshold_local
 
 import image_open as io
+import complex_preprocess as cp
 
 def photo_neg(img_np):
     '''Calculates and displays a photographic negative of a numpy array of pixel
     values'''
     img_np_neg = 1 - img_np
-    plt.figure()
-    ax = plt.gca()
-    ax.set_xlim((0, img_np.shape[1]))
-    ax.set_ylim((img_np.shape[0], 0))
-    plt.imshow(img_np_neg, cmap = 'gray')
-    plt.show(block = False)
+    #plt.figure()
+    #ax = plt.gca()
+    #ax.set_xlim((0, img_np.shape[1]))
+    #ax.set_ylim((img_np.shape[0], 0))
+    #plt.imshow(img_np_neg, cmap = 'gray')
+    #plt.show(block = False)
     return img_np_neg
 
 def thres_binary(img_np, thres):
     '''Binarizes a grey-scale image based on a given threshold value between 0
     and 255'''
-    img_np_bin = (img_np > thres)*1
+    img_np_bin = img_np >= thres
+    #img_np_bin = photo_neg(img_np_bin)
+    #plt.figure()
+    #ax = plt.gca()
+    #ax.set_xlim((0, img_np_bin.shape[1]))
+    #ax.set_ylim((img_np_bin.shape[0], 0))
+    #plt.imshow(img_np_bin, cmap = 'gray')
+    #plt.show(block = False)
+    return img_np_bin
+
+def thres_binary_otsu(img_np):
+    '''Binarizes a grey-scale image based on a given threshold value between 0
+    and 255'''
+    thres = threshold_otsu(img_np)
+    img_np_bin = img_np >= thres
+    #img_np_bin = photo_neg(img_np_bin)
+    #plt.figure()
+    #ax = plt.gca()
+    #ax.set_xlim((0, img_np_bin.shape[1]))
+    #ax.set_ylim((img_np_bin.shape[0], 0))
+    #plt.imshow(img_np_bin, cmap = 'gray')
+    #plt.show(block = False)
+    return img_np_bin
+
+def thres_binary_loc(img_np):
+    '''Binarizes a grey-scale image based on a given threshold value between 0
+    and 255'''
+    thres = threshold_local(img_np, 5)
+    img_np_bin = img_np >= thres
+    #img_np_bin = photo_neg(img_np_bin)
     #plt.figure()
     #ax = plt.gca()
     #ax.set_xlim((0, img_np_bin.shape[1]))
@@ -49,5 +80,6 @@ def run_image_preprocess(filename):
     return img_np_bin
 
 def run_image_preprocess_MNIST(np_list_MNISTimgs):
-    proc_imgs = [thres_binary(x, 0.5) for x in np_list_MNISTimgs]
-    return proc_imgs
+    proc_imgs_thres1 = [thres_binary_otsu(x) for x in np_list_MNISTimgs]
+    proc_imgs_thres2 = [thres_binary_loc(x) for x in np_list_MNISTimgs]
+    return proc_imgs_thres1, proc_imgs_thres2
