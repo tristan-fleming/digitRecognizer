@@ -28,22 +28,22 @@ def find_skeleton(img_np):
     skeleton = skeletonize(img_bool)
     #out = morphology.medial_axis(img_bool)
     # display results
-    fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(8, 4),
-                             sharex=True, sharey=True,
-                             subplot_kw={'adjustable': 'box-forced'})
+    #fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(8, 4),
+                             #sharex=True, sharey=True,
+                             #subplot_kw={'adjustable': 'box-forced'})
 
-    ax = axes.ravel()
+    #ax = axes.ravel()
 
-    ax[0].imshow(img_np, cmap=plt.cm.gray)
-    ax[0].axis('off')
-    ax[0].set_title('original', fontsize=20)
+    #ax[0].imshow(img_np, cmap=plt.cm.gray)
+    #ax[0].axis('off')
+    #ax[0].set_title('original', fontsize=20)
 
-    ax[1].imshow(skeleton, cmap=plt.cm.gray)
-    ax[1].axis('off')
-    ax[1].set_title('skeleton', fontsize=20)
+    #ax[1].imshow(skeleton, cmap=plt.cm.gray)
+    #ax[1].axis('off')
+    #ax[1].set_title('skeleton', fontsize=20)
 
-    fig.tight_layout()
-    plt.show()
+    #fig.tight_layout()
+    #plt.show()
 
     skeleton = np.uint8(skeleton)
     return skeleton #dtype = boolean

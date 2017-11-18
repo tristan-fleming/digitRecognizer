@@ -22,7 +22,8 @@ def photo_neg(img_np):
 def thres_binary(img_np, thres):
     '''Binarizes a grey-scale image based on a given threshold value between 0
     and 255'''
-    img_np_bin = img_np >= thres
+    img_np_bool = img_np >= thres
+    img_np_bin = img_np_bool*1
     #img_np_bin = photo_neg(img_np_bin)
     #plt.figure()
     #ax = plt.gca()
@@ -36,7 +37,8 @@ def thres_binary_otsu(img_np):
     '''Binarizes a grey-scale image based on a given threshold value between 0
     and 255'''
     thres = threshold_otsu(img_np)
-    img_np_bin = img_np >= thres
+    img_np_bool = img_np >= thres
+    img_np_bin = img_np_bool*1
     #img_np_bin = photo_neg(img_np_bin)
     #plt.figure()
     #ax = plt.gca()
@@ -96,6 +98,6 @@ def run_image_preprocess(filename):
 def run_image_preprocess_MNIST(np_list_MNISTimgs):
     #proc_imgs_thres1 = [thres_binary_otsu(x) for x in np_list_MNISTimgs]
     #proc_imgs_thres2 = [thres_binary_loc(x) for x in np_list_MNISTimgs]
-    proc_imgs = [thres_binary_min(x) for x in np_list_MNISTimgs]
+    proc_imgs = [thres_binary_otsu(x) for x in np_list_MNISTimgs]
     #return proc_imgs_thres1, proc_imgs_thres2
     return proc_imgs

@@ -2,14 +2,17 @@ import numpy as np
 from scipy import misc
 import matplotlib.pyplot as plt
 
-def find_fg_points(matrix, fg_val=0):
+def find_fg_points(img_np, fg_val=1):
     """Returns all "foreground points"
     of a given 2-D numpy matrix"""
-    fg_list = []
+    #img_list = np.ndarray.tolist(img_np)
+    fg_list = list()
 
-    for (index, point) in np.ndenumerate(matrix):
-        if (point == fg_val):
-            fg_list.append(index)
+    fg_list = [i for i,x in np.ndenumerate(img_np) if x == fg_val]
+
+    #for (index, point) in np.ndenumerate(matrix):
+    #    if (point == fg_val):
+    #        fg_list.append(index)
 
     return fg_list
 

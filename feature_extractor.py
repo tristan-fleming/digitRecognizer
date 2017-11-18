@@ -23,9 +23,9 @@ def bounding_box(img_np):
     minX = min(col)
     maxY = max(row)
     minY = min(row)
-    aspectRatio = (maxY - minY +1) / (maxX - minX + 1)
-    boundingBox = [(minX, minY), (minX, maxY), (maxX, maxY), (maxX, minY), (minX, minY)]
-    yBox, xBox = zip(*boundingBox)
+    #aspectRatio = (maxY - minY +1) / (maxX - minX + 1)
+    #boundingBox = [(minX, minY), (minX, maxY), (maxX, maxY), (maxX, minY), (minX, minY)]
+    #yBox, xBox = zip(*boundingBox)
     blacknessRatio = len(fg)/((maxX - minX + 1 )*(maxY - minY + 1))
     #plt.figure()
     #plt.scatter(col, row, marker=',')
@@ -34,8 +34,8 @@ def bounding_box(img_np):
     #ax.set_xlim((0, img_np.shape[1]))
     #ax.set_ylim((img_np.shape[0], 0))
     #plt.show()
-    col_dim = maxX - minX
-    row_dim = maxY - minY
+    #col_dim = maxX - minX
+    #row_dim = maxY - minY
     return blacknessRatio
 
 def quadrant_bounding_box(img):
@@ -66,26 +66,26 @@ def hough_line_transform(img_np):
                                  line_gap=3)
 
     # Generating figure 2
-    fig, axes = plt.subplots(1, 2, figsize=(10, 5), sharex=True, sharey=True)
-    ax = axes.ravel()
+    #fig, axes = plt.subplots(1, 2, figsize=(10, 5), sharex=True, sharey=True)
+    #ax = axes.ravel()
 
-    ax[0].imshow(skeleton, cmap=cm.gray)
-    ax[0].set_title('Input image')
+    #ax[0].imshow(skeleton, cmap=cm.gray)
+    #ax[0].set_title('Input image')
 
-    ax[1].imshow(skeleton, cmap=cm.gray)
-    for line in lines:
-        p0, p1 = line
-        ax[1].plot((p0[0], p1[0]), (p0[1], p1[1]))
-    ax[1].set_xlim((0, skeleton.shape[1]))
-    ax[1].set_ylim((skeleton.shape[0], 0))
-    ax[1].set_title('Probabilistic Hough')
+    #ax[1].imshow(skeleton, cmap=cm.gray)
+    #for line in lines:
+    #    p0, p1 = line
+    #    ax[1].plot((p0[0], p1[0]), (p0[1], p1[1]))
+    #ax[1].set_xlim((0, skeleton.shape[1]))
+    #ax[1].set_ylim((skeleton.shape[0], 0))
+    #ax[1].set_title('Probabilistic Hough')
 
-    for a in ax:
-        a.set_axis_off()
-        a.set_adjustable('box-forced')
+    #for a in ax:
+    #    a.set_axis_off()
+    #    a.set_adjustable('box-forced')
 
-    plt.tight_layout()
-    plt.show()
+    #plt.tight_layout()
+    #plt.show()
     return lines
 
 def coords2slope(lines):
@@ -204,8 +204,9 @@ def line_features(img_np):
     '''Finds the lines that make up the edge points in the digit and the notch
     pairs along those edges.'''
     lines = hough_line_transform(img_np)
-    notch_pairs = find_notches(lines, 4, 120)
-    return lines, notch_pairs
+    num_lines = len(lines)
+    #notch_pairs = find_notches(lines, 4, 120)
+    return num_lines
 
 def features_MNIST(np_list_imgs_MNIST):
 #def features_MNIST(np_list_imgs_MNIST_thres1, np_list_imgs_MNIST_thres2):
@@ -213,4 +214,5 @@ def features_MNIST(np_list_imgs_MNIST):
     #blacknessRatio = [bounding_box(x) for x in np_list_imgs_MNIST_thres1]
     holes = [num_holes(x) for x in np_list_imgs_MNIST]
     #holes = [num_holes(x) for x in np_list_imgs_MNIST_thres2]
-    return blacknessRatio, holes
+    num_lines = [line_features(x) for x in np_list_imgs_MNIST]
+    return blacknessRatio, holes, num_lines
