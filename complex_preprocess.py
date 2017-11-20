@@ -24,7 +24,7 @@ def find_skeleton(img_np):
     # perform skeletonization
     img_bool = img_as_bool(img_np)
     #invert img_bool
-    img_bool = invert(img_bool)
+    #img_bool = invert(img_bool)
     skeleton = skeletonize(img_bool)
     #out = morphology.medial_axis(img_bool)
     # display results

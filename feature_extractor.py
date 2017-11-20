@@ -13,46 +13,80 @@ import simple_preprocess as sp
 import complex_preprocess as cp
 import helpers as h
 
-def bounding_box(img_np):
+
+def bounding_box(img_np, bounded = False):
     '''Finds the bounding box of the given coordinates, i.e. the minimum size
     box that encloses all of the given coordinates. Also returns the blackness
     and aspect ratio of the bounding box.'''
     fg = sf.find_fg_points(img_np, 1)
-    row, col = zip(*fg)
-    maxX = max(col)
-    minX = min(col)
-    maxY = max(row)
-    minY = min(row)
-    #aspectRatio = (maxY - minY +1) / (maxX - minX + 1)
-    #boundingBox = [(minX, minY), (minX, maxY), (maxX, maxY), (maxX, minY), (minX, minY)]
-    #yBox, xBox = zip(*boundingBox)
-    blacknessRatio = len(fg)/((maxX - minX + 1 )*(maxY - minY + 1))
-    #plt.figure()
-    #plt.scatter(col, row, marker=',')
-    #plt.plot(yBox, xBox, 'b-')
-    #ax = plt.gca()
-    #ax.set_xlim((0, img_np.shape[1]))
-    #ax.set_ylim((img_np.shape[0], 0))
-    #plt.show()
-    #col_dim = maxX - minX
-    #row_dim = maxY - minY
-    return blacknessRatio
+    if not fg:
+        br = 0
+        bb = []
+    else:
+        if bounded == False:
+            row, col = zip(*fg)
+            maxX = max(col)
+            minX = min(col)
+            maxY = max(row)
+            minY = min(row)
+            br = len(fg)/((maxX - minX + 1 )*(maxY - minY + 1))
+        elif bounded == True:
+            maxY, maxX = img_np.shape
+            minX = 0
+            minY = 0
+            br = len(fg)/(maxX*maxY)
+
+        #aspectRatio = (maxY - minY +1) / (maxX - minX + 1)
+        #boundingBox = [(minX, minY), (minX, maxY), (maxX, maxY), (maxX, minY), (minX, minY)]
+        #yBox, xBox = zip(*boundingBox)
+
+        #plt.figure()
+        #plt.scatter(col, row, marker=',')
+        #plt.plot(yBox, xBox, 'b-')
+        #ax = plt.gca()
+        #ax.set_xlim((0, img_np.shape[1]))
+        #ax.set_ylim((img_np.shape[0], 0))
+        #plt.show()
+        #col_dim = maxX - minX
+        #row_dim = maxY - minY
+        bb = [minX, maxX, minY, maxY]
+    return br, bb
 
 def quadrant_bounding_box(img):
     '''Finds the blackness ratio, aspect ratio, and bounding box for each of the
     four quadrants of the digit img'''
-    bb = bounding_box(img)
-    img_np = img[bb[2][0][1]: bb[2][1][1], bb[2][0][0]:bb[2][2][0]]
+    br, bb = bounding_box(img)
+    img_np = img[bb[2]: bb[3], bb[0]:bb[1]]
     [num_rows, num_cols] = img_np.shape
-    img_np_1 = img_np[0:int(round(num_rows/2)), 0:int(round(num_cols/2))]
-    img_np_2 = img_np[0:int(round(num_rows/2)), int(round(num_cols/2)):num_cols]
-    img_np_3 = img_np[int(round(num_rows/2)):num_rows, 0:int(round(num_cols/2))]
-    img_np_4 = img_np[int(round(num_rows/2)):num_rows, int(round(num_cols/2)):num_cols]
-    bb1 = bounding_box(img_np_1)
-    bb2 = bounding_box(img_np_2)
-    bb3 = bounding_box(img_np_3)
-    bb4 = bounding_box(img_np_4)
-    return bb1, bb2, bb3, bb4
+    img_np_1 = img_np[int(round(num_rows/2)):num_rows, 0:int(round(num_cols/2))]
+    img_np_2 = img_np[int(round(num_rows/2)):num_rows, int(round(num_cols/2)):num_cols]
+    img_np_3 = img_np[0:int(round(num_rows/2)), 0:int(round(num_cols/2))]
+    img_np_4 = img_np[0:int(round(num_rows/2)), int(round(num_cols/2)):num_cols]
+    br1, bb1 = bounding_box(img_np_1, True)
+    br2, bb2 = bounding_box(img_np_2, True)
+    br3, bb3 = bounding_box(img_np_3, True)
+    br4, bb4 = bounding_box(img_np_4, True)
+    return br1, br2, br3, br4
+
+def eighths_bounding_box(img):
+    '''Finds the blackness ratio, aspect ratio, and bounding box for each of the
+    four quadrants of the digit img'''
+    br, bb = bounding_box(img)
+    img_np = img[bb[2]: bb[3], bb[0]:bb[1]]
+    [num_rows, num_cols] = img_np.shape
+    img_np_1 = img_np[int(round(2*num_rows/3)):num_rows, 0:int(round(num_cols/2))]
+    img_np_2 = img_np[int(round(2*num_rows/3)):num_rows, int(round(num_cols/2)):num_cols]
+    img_np_3 = img_np[int(round(num_rows/3)):int(round(2*num_rows/3)), 0:int(round(num_cols/2))]
+    img_np_4 = img_np[int(round(num_rows/3)):int(round(2*num_rows/3)), int(round(num_cols/2)):num_cols]
+    img_np_5 = img_np[0:int(round(num_rows/3)), 0:int(round(num_cols/2))]
+    img_np_6 = img_np[0:int(round(num_rows/3)), int(round(num_cols/2)):num_cols]
+    br1, bb1 = bounding_box(img_np_1, True)
+    br2, bb2 = bounding_box(img_np_2, True)
+    br3, bb3 = bounding_box(img_np_3, True)
+    br4, bb4 = bounding_box(img_np_4, True)
+    br5, bb5 = bounding_box(img_np_5, True)
+    br6, bb6 = bounding_box(img_np_6, True)
+    return br1, br2, br3, br4, br5, br6
 
 def hough_line_transform(img_np):
     '''Calculates the Hough line transform of a list of edge points edge_pts.
@@ -60,10 +94,12 @@ def hough_line_transform(img_np):
     curve in r-theta space, where r is the shortest distance from a line
     intersecting the edge point to the origin and theta is the angle of that
     line.'''
-    skeleton = cp.find_skeleton(img_np)
-    #edge_pts_loc = edge_pts
-    lines = probabilistic_hough_line(skeleton, threshold=10, line_length=5,
-                                 line_gap=3)
+    if np.count_nonzero(img_np) == 0:
+        lines = []
+    else:
+        skeleton = cp.find_skeleton(img_np)
+        #edge_pts_loc = edge_pts
+        lines = probabilistic_hough_line(skeleton, threshold = 1, line_length = 1, line_gap = 1)
 
     # Generating figure 2
     #fig, axes = plt.subplots(1, 2, figsize=(10, 5), sharex=True, sharey=True)
@@ -205,14 +241,58 @@ def line_features(img_np):
     pairs along those edges.'''
     lines = hough_line_transform(img_np)
     num_lines = len(lines)
-    #notch_pairs = find_notches(lines, 4, 120)
-    return num_lines
+    if num_lines == 0:
+        maxLength = 0
+    else:
+        maxLength = 0
+        for coords in lines:
+            length = np.sqrt((coords[1][1] - coords[0][1])**2 + (coords[1][0] - coords[0][0])**2)
+            if length > maxLength:
+                maxLength = length
+        #notch_pairs = find_notches(lines, 4, 120)
+    return num_lines, maxLength
+
+def line_features_comps(img_np):
+    br, bb = bounding_box(img_np)
+    img_np_bounded = img_np[bb[2]: bb[3], bb[0]:bb[1]]
+    [num_rows, num_cols] = img_np_bounded.shape
+    num_lines_img, max_line_length_img = line_features(img_np_bounded)
+    img_top = img_np_bounded[0:num_rows, int(round(num_cols/2)):num_cols]
+    img_bottom = img_np_bounded[0:num_rows, 0:int(round(num_cols/2))]
+    img_left = img_np_bounded[0:int(round(num_rows/2)), 0:num_cols]
+    img_right = img_np_bounded[int(round(num_rows/2)):num_rows, 0:num_cols]
+    num_lines_top, max_line_length_top = line_features(img_top)
+    num_lines_bottom, max_line_length_bottom = line_features(img_bottom)
+    num_lines_left, max_line_length_left = line_features(img_left)
+    num_lines_right, max_line_length_right = line_features(img_right)
+    num_lines = (num_lines_img, num_lines_top, num_lines_bottom, num_lines_left, num_lines_right)
+    max_line_length = (max_line_length_img, max_line_length_top, max_line_length_bottom, max_line_length_left, max_line_length_right)
+    return num_lines, max_line_length
 
 def features_MNIST(np_list_imgs_MNIST):
 #def features_MNIST(np_list_imgs_MNIST_thres1, np_list_imgs_MNIST_thres2):
-    blacknessRatio = [bounding_box(x) for x in np_list_imgs_MNIST]
+    br, bb = map(list,zip(*[bounding_box(x) for x in np_list_imgs_MNIST]))
     #blacknessRatio = [bounding_box(x) for x in np_list_imgs_MNIST_thres1]
     holes = [num_holes(x) for x in np_list_imgs_MNIST]
     #holes = [num_holes(x) for x in np_list_imgs_MNIST_thres2]
-    num_lines = [line_features(x) for x in np_list_imgs_MNIST]
-    return blacknessRatio, holes, num_lines
+    num_lines = [line_features_comps(x)[0] for x in np_list_imgs_MNIST]
+    num_lines_img = [x[0] for x in num_lines]
+    num_lines_top = [x[1] for x in num_lines]
+    num_lines_bottom = [x[2] for x in num_lines]
+    num_lines_left = [x[3] for x in num_lines]
+    num_lines_right = [x[4] for x in num_lines]
+    max_line_length = [line_features_comps(x)[1] for x in np_list_imgs_MNIST]
+    max_line_length_img = [x[0] for x in max_line_length]
+    max_line_length_top = [x[1] for x in max_line_length]
+    max_line_length_bottom = [x[2] for x in max_line_length]
+    max_line_length_left = [x[3] for x in max_line_length]
+    max_line_length_right = [x[4] for x in max_line_length]
+    br_s1 = [eighths_bounding_box(x)[0] for x in np_list_imgs_MNIST]
+    br_s2 = [eighths_bounding_box(x)[1] for x in np_list_imgs_MNIST]
+    br_s3 = [eighths_bounding_box(x)[2] for x in np_list_imgs_MNIST]
+    br_s4 = [eighths_bounding_box(x)[3] for x in np_list_imgs_MNIST]
+    br_s5 = [eighths_bounding_box(x)[3] for x in np_list_imgs_MNIST]
+    br_s6 = [eighths_bounding_box(x)[3] for x in np_list_imgs_MNIST]
+    features = np.asarray(list(zip(br, br_s1, br_s2, br_s3, br_s4, br_s5, br_s6, holes, num_lines_img, num_lines_top, num_lines_bottom, num_lines_left, num_lines_right, max_line_length_img, max_line_length_top, max_line_length_bottom, max_line_length_left, max_line_length_right)))
+    # Transform features by scaling each feature to a given range
+    return features
