@@ -6,6 +6,7 @@ from skimage.transform import (hough_line, hough_line_peaks,
                                probabilistic_hough_line, hough_ellipse)
 from skimage import data, color
 from skimage.draw import ellipse_perimeter
+from skimage.feature import hog
 
 import edge_finder as ef
 import shape_finder as sf
@@ -101,7 +102,7 @@ def hough_line_transform(img_np):
         #edge_pts_loc = edge_pts
         lines = probabilistic_hough_line(skeleton, threshold = 1, line_length = 1, line_gap = 1)
 
-    # Generating figure 2
+    #Generating figure 2
     #fig, axes = plt.subplots(1, 2, figsize=(10, 5), sharex=True, sharey=True)
     #ax = axes.ravel()
 
@@ -269,6 +270,47 @@ def line_features_comps(img_np):
     max_line_length = (max_line_length_img, max_line_length_top, max_line_length_bottom, max_line_length_left, max_line_length_right)
     return num_lines, max_line_length
 
+def HOG(img_np, bounded = True, padding = 0):
+    if bounded == False:
+        fd = hog(img_np, orientations = 9, pixels_per_cell = (14,14), cells_per_block = (1,1), visualise = False)
+    elif bounded == True:
+        br, bb = bounding_box(img_np)
+        while True:
+            if (bb[3]-bb[2]) < 4:
+                bb[2] -= 1
+                if (bb[3]-bb[2]) < 4:
+                    bb[3] += 1
+                else:
+                    break
+            else:
+                break
+
+        while True:
+            if (bb[3] - bb[2]) % 2 != 0:
+                bb[3] += 1
+            else:
+                break
+        while True:
+            if (bb[1]-bb[0]) < 4:
+                bb[0] -= 1
+                if (bb[1]-bb[0]) < 4:
+                    bb[1] += 1
+                else:
+                    break
+            else:
+                break
+
+        while True:
+            if (bb[1] - bb[0]) % 2 != 0:
+                bb[1] += 1
+            else:
+                break
+        bb[1] += padding
+        bb[3] += padding
+        img_np_bounded = img_np[bb[2]: bb[3], bb[0]:bb[1]]
+        fd = hog(img_np_bounded, orientations = 9, pixels_per_cell = (img_np_bounded.shape[1]/2, img_np_bounded.shape[0]/2), cells_per_block = (1,1), visualise = False)
+    return fd
+
 def features_MNIST(np_list_imgs_MNIST):
 #def features_MNIST(np_list_imgs_MNIST_thres1, np_list_imgs_MNIST_thres2):
     br, bb = map(list,zip(*[bounding_box(x) for x in np_list_imgs_MNIST]))
@@ -277,10 +319,10 @@ def features_MNIST(np_list_imgs_MNIST):
     #holes = [num_holes(x) for x in np_list_imgs_MNIST_thres2]
     num_lines = [line_features_comps(x)[0] for x in np_list_imgs_MNIST]
     num_lines_img = [x[0] for x in num_lines]
-    num_lines_top = [x[1] for x in num_lines]
-    num_lines_bottom = [x[2] for x in num_lines]
-    num_lines_left = [x[3] for x in num_lines]
-    num_lines_right = [x[4] for x in num_lines]
+    #num_lines_top = [x[1] for x in num_lines]
+    #num_lines_bottom = [x[2] for x in num_lines]
+    #num_lines_left = [x[3] for x in num_lines]
+    #num_lines_right = [x[4] for x in num_lines]
     max_line_length = [line_features_comps(x)[1] for x in np_list_imgs_MNIST]
     max_line_length_img = [x[0] for x in max_line_length]
     max_line_length_top = [x[1] for x in max_line_length]
@@ -291,8 +333,11 @@ def features_MNIST(np_list_imgs_MNIST):
     br_s2 = [eighths_bounding_box(x)[1] for x in np_list_imgs_MNIST]
     br_s3 = [eighths_bounding_box(x)[2] for x in np_list_imgs_MNIST]
     br_s4 = [eighths_bounding_box(x)[3] for x in np_list_imgs_MNIST]
-    br_s5 = [eighths_bounding_box(x)[3] for x in np_list_imgs_MNIST]
-    br_s6 = [eighths_bounding_box(x)[3] for x in np_list_imgs_MNIST]
-    features = np.asarray(list(zip(br, br_s1, br_s2, br_s3, br_s4, br_s5, br_s6, holes, num_lines_img, num_lines_top, num_lines_bottom, num_lines_left, num_lines_right, max_line_length_img, max_line_length_top, max_line_length_bottom, max_line_length_left, max_line_length_right)))
+    br_s5 = [eighths_bounding_box(x)[4] for x in np_list_imgs_MNIST]
+    br_s6 = [eighths_bounding_box(x)[5] for x in np_list_imgs_MNIST]
+    hog_features = [HOG(x, bounded = False) for x in np_list_imgs_MNIST]
+    #features = np.asarray(list(zip(br, br_s1, br_s2, br_s3, br_s4, br_s5, br_s6, holes, num_lines_img, num_lines_top, num_lines_bottom, num_lines_left, num_lines_right, max_line_length_img, max_line_length_top, max_line_length_bottom, max_line_length_left, max_line_length_right)))
+    features = np.asarray(list(zip(br, br_s1, br_s2, br_s3, br_s4, br_s5, br_s6, holes, num_lines_img, max_line_length_img, max_line_length_top, max_line_length_bottom, max_line_length_left, max_line_length_right)))
+    features = np.concatenate((features, hog_features), axis =1)
     # Transform features by scaling each feature to a given range
     return features

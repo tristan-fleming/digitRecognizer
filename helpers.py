@@ -18,3 +18,12 @@ def plot_hist(digit_list):
         bincenters = 0.5*(binEdges[1:]+binEdges[:-1])
         plt.plot(bincenters,y,'-')
     plt.show()
+
+def plot_confusion_matrices(confusion_matrices):
+    for i, confusion_mx in enumerate(confusion_matrices):
+        row_sums = confusion_mx.sum(axis = 1, keepdims = True)
+        norm_conf_mx = confusion_mx/row_sums
+        np.fill_diagonal(norm_conf_mx,0)
+        plt.matshow(norm_conf_mx, cmap= plt.cm.gray)
+        plt.savefig("classifier_num%d_confusionMx.png" % (i))
+        plt.close()
