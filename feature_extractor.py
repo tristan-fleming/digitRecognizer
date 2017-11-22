@@ -100,7 +100,7 @@ def hough_line_transform(img_np):
     else:
         skeleton = cp.find_skeleton(img_np)
         #edge_pts_loc = edge_pts
-        lines = probabilistic_hough_line(skeleton, threshold = 1, line_length = 1, line_gap = 1)
+        lines = probabilistic_hough_line(skeleton, threshold = 1, line_length = 1, line_gap = 2)
 
     #Generating figure 2
     #fig, axes = plt.subplots(1, 2, figsize=(10, 5), sharex=True, sharey=True)
@@ -125,19 +125,40 @@ def hough_line_transform(img_np):
     #plt.show()
     return lines
 
-def coords2slope(lines):
+def line_angle_hist(img_np):
     '''Converts the representation of the Hough transform lines from two point
     coordinates into a slope value.'''
-    m = []
+    lines = hough_line_transform(img_np)
+    ang_q1_q3 = 0
+    ang_q2_q4 = 0
+    vert = 0
+    horz = 0
+    num_lines = len(lines)
     for line in lines:
         p0, p1 = line
-        if p1[0]-p0[0] == 0:
-            if p1[1]-p0[1] > 0:
-                m.append(np.inf)
-            m.append(-np.inf)
-        else:
-            m.append((p1[1]-p0[1])/(p1[0]-p0[0]))
-    return m
+        p1_shifted = (p1[0] - p0[0], p1[1] - p0[1])
+        #print(p1_shifted)
+        if p1_shifted[0] > 0:
+            if p1_shifted[1] > 0:
+                ang_q2_q4 += 1
+            if p1_shifted[1] < 0:
+                ang_q1_q3 += 1
+            if p1_shifted[1] == 0:
+                horz += 1
+        elif p1_shifted[0] < 0:
+            if p1_shifted[1] > 0:
+                ang_q1_q3 += 1
+            if p1_shifted[1] < 0:
+                ang_q2_q4 += 1
+            if p1_shifted[1] == 0:
+                horz += 1
+        elif p1_shifted[0] == 0:
+            vert += 1
+        ang_q1_q3 = ang_q1_q3/num_lines
+        ang_q2_q4 = ang_q2_q4/num_lines
+        horz = horz/num_lines
+        vert = vert/num_lines
+    return ang_q1_q3, ang_q2_q4, vert, horz
 
 def distance(pt1, pt2):
     '''Finds the distance between two points'''
@@ -160,7 +181,6 @@ def find_notches(lines, threshold_dist, threshold_angle):
     the threshold threshold_angle with each other.'''
     notch_pairs = []
     slope = coords2slope(lines)
-    #line_coords_flat = [item for sublist in lines for item in sublist]
     for ind1, (line1_pt1, line1_pt2) in enumerate(lines):
         for ind2, (line2_pt1, line2_pt2) in enumerate(lines):
             if ind1 != ind2:
@@ -207,23 +227,54 @@ def num_holes(img_np):
     '''Finds the number of holes in a digit based on the number of connected
     background and foreground regions. Assumes that the foreground is completely
     surrounded by a background region.'''
+
     fg = sf.find_fg_points(img_np, 1)
     bg = sf.find_fg_points(img_np, 0)
+    [num_rows, num_cols] = img_np.shape
+    #print(num_rows)
+    #print(num_cols)
+
     bg_shapes = sf.get_shapes(bg, 4)
+
+    row, col = zip(*fg)
+    maxX = max(col)
+    #print(maxX)
+    minX = min(col)
+    #print(minX)
+    maxY = max(row)
+    #print(maxY)
+    minY = min(row)
+    #print(minY)
+
+    bg_wo_holes_indices = []
+    bg_wo_holes = 0
+    for i, shape in enumerate(bg_shapes):
+        for pnt in shape:
+            if pnt[0] == 0 or pnt[0] == num_rows:
+                bg_wo_holes += len(shape)
+                bg_wo_holes_indices.append(i)
+                break
+            elif pnt[1] == 0 or pnt[1] == num_cols:
+                bg_wo_holes += len(shape)
+                bg_wo_holes_indices.append(i)
+                break
+
+    padding = ((num_rows + 1)*(num_cols + 1)) - ((maxX - minX + 1)*(maxY - minY + 1))
+    bg_wo_holes_br = (bg_wo_holes - padding)/((maxX - minX + 1)*(maxY - minY + 1))
+
     fg_shapes = sf.get_shapes(fg, 8)
 
     num_err_shapes_bg = 0
     num_err_shapes_fg = 0
+
     for shape in bg_shapes:
         if len(shape) < 3:
-            num_err_shapes_bg = num_err_shapes_bg + 1
+            num_err_shapes_bg += 1
 
     for shape in fg_shapes:
         if len(shape) < 3:
-            num_err_shapes_fg = num_err_shapes_fg + 1
+            num_err_shapes_fg += 1
 
-    #if num_fg_shapes > 1:
-        #print("Disconnected digit!")
     if len(bg_shapes) > 3:
         num_bg_shapes = 3
     else:
@@ -234,8 +285,8 @@ def num_holes(img_np):
     else:
         num_fg_shapes = len(fg_shapes)
 
-    num_holes = (num_bg_shapes-num_err_shapes_bg) - (num_fg_shapes-num_err_shapes_fg)
-    return num_holes
+    holes = (num_bg_shapes-num_err_shapes_bg) - (num_fg_shapes-num_err_shapes_fg)
+    return holes, bg_wo_holes_br
 
 def line_features(img_np):
     '''Finds the lines that make up the edge points in the digit and the notch
@@ -315,20 +366,21 @@ def features_MNIST(np_list_imgs_MNIST):
 #def features_MNIST(np_list_imgs_MNIST_thres1, np_list_imgs_MNIST_thres2):
     br, bb = map(list,zip(*[bounding_box(x) for x in np_list_imgs_MNIST]))
     #blacknessRatio = [bounding_box(x) for x in np_list_imgs_MNIST_thres1]
-    holes = [num_holes(x) for x in np_list_imgs_MNIST]
+    holes = [num_holes(x)[0] for x in np_list_imgs_MNIST]
+    bg_wo_holes_br = [num_holes(x)[1] for x in np_list_imgs_MNIST]
     #holes = [num_holes(x) for x in np_list_imgs_MNIST_thres2]
     num_lines = [line_features_comps(x)[0] for x in np_list_imgs_MNIST]
     num_lines_img = [x[0] for x in num_lines]
-    #num_lines_top = [x[1] for x in num_lines]
-    #num_lines_bottom = [x[2] for x in num_lines]
-    #num_lines_left = [x[3] for x in num_lines]
-    #num_lines_right = [x[4] for x in num_lines]
     max_line_length = [line_features_comps(x)[1] for x in np_list_imgs_MNIST]
     max_line_length_img = [x[0] for x in max_line_length]
     max_line_length_top = [x[1] for x in max_line_length]
     max_line_length_bottom = [x[2] for x in max_line_length]
     max_line_length_left = [x[3] for x in max_line_length]
     max_line_length_right = [x[4] for x in max_line_length]
+    num_lines_q1_q3 = [line_angle_hist(x)[0] for x in np_list_imgs_MNIST]
+    num_lines_q2_q4 = [line_angle_hist(x)[1] for x in np_list_imgs_MNIST]
+    num_lines_vert = [line_angle_hist(x)[2] for x in np_list_imgs_MNIST]
+    num_lines_horz = [line_angle_hist(x)[3] for x in np_list_imgs_MNIST]
     br_s1 = [eighths_bounding_box(x)[0] for x in np_list_imgs_MNIST]
     br_s2 = [eighths_bounding_box(x)[1] for x in np_list_imgs_MNIST]
     br_s3 = [eighths_bounding_box(x)[2] for x in np_list_imgs_MNIST]
@@ -337,7 +389,11 @@ def features_MNIST(np_list_imgs_MNIST):
     br_s6 = [eighths_bounding_box(x)[5] for x in np_list_imgs_MNIST]
     hog_features = [HOG(x, bounded = False) for x in np_list_imgs_MNIST]
     #features = np.asarray(list(zip(br, br_s1, br_s2, br_s3, br_s4, br_s5, br_s6, holes, num_lines_img, num_lines_top, num_lines_bottom, num_lines_left, num_lines_right, max_line_length_img, max_line_length_top, max_line_length_bottom, max_line_length_left, max_line_length_right)))
-    features = np.asarray(list(zip(br, br_s1, br_s2, br_s3, br_s4, br_s5, br_s6, holes, num_lines_img, max_line_length_img, max_line_length_top, max_line_length_bottom, max_line_length_left, max_line_length_right)))
+    features = np.asarray(list(zip(br, br_s1, br_s2, br_s3, br_s4,
+    br_s5, br_s6, holes, bg_wo_holes_br, num_lines_img, max_line_length_img,
+    max_line_length_top, max_line_length_bottom, max_line_length_left,
+    max_line_length_right, num_lines_q1_q3, num_lines_q2_q4, num_lines_vert,
+    num_lines_horz)))
     features = np.concatenate((features, hog_features), axis =1)
     # Transform features by scaling each feature to a given range
     return features

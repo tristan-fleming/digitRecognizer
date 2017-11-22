@@ -1,6 +1,11 @@
+#Import functionality from other modules
+
 import image_open as io
 import simple_preprocess as sp
 import feature_extractor as fe
+
+#Import functionality from python packages
+
 import numpy as np
 from sklearn.preprocessing import scale
 from sklearn.naive_bayes import GaussianNB
@@ -12,42 +17,55 @@ from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier, VotingC
 from sklearn.svm import SVC, LinearSVC
 from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
 from sklearn.neural_network import MLPClassifier
+from sklearn.manifold import Isomap
 import matplotlib.pyplot as plt
 from matplotlib import cm
 from yellowbrick.features.rankd import Rank1D, Rank2D
+from mpl_toolkits.mplot3d import Axes3D
 
-def run_feature_extraction(feature_num,num_samples):
+def run_feature_extraction(feature_num, num_samples, scaled = False):
+    '''Extracts and plots the feature vals for feature_num of the feature vector
+    for num_samples of the training MNIST data set. The feature values are
+    scaled if the boolean scaled is set to True.'''
     train, valid, test = io.read_MNIST()
     feature_vals = []
-    kwargs = dict(alpha = 1, normed = False, bins = 60, range = (-3,3))
-    #histtype = 'bar'
+    kwargs = dict(alpha = 1, normed = False, bins = 60) #range = (-3,3))
     colors = [cm.tab10(x) for x in np.linspace(0,1,10)]
     X_plot = np.linspace(0, 1, 1000)
     feature_names = ['Blackness ratio', 'Blackness ratio upper left',
     'Blackness ratio upper right', 'Blackness ratio center left',
     'Blackness ratio center right', 'Blackness ratio lower left',
     'Blackness ratio lower right', 'Number of holes',
+    'Whiteness ratio without holes',
     'Hough transform: total number of lines',
     'Hough transform: longest line length',
     'Hough transform: longest line in upper half',
     'Hough transform: longest line in lower half',
     'Hough transform: longest line in left half',
-    'Hough transform: longest line in right half' ]
+    'Hough transform: longest line in right half',
+    'Number of lines with angles in quadrants 1/3',
+    'Number of lines with angles in quadrants 2/4',
+    'Number of vertical lines',
+    'Number of horizontal lines']
     for ind in range(0, 36):
         feature_names.append('Histogram of oriented gradients: orientation/block # %d' %(ind))
+
     plt.close('all')
     plt.figure(1)
     fig, ax = plt.subplots()
-
     for digit in range(0,10):
         digit_imgs, digit_indices = io.MNIST_sort(train, digit, num_samples)
         #digit_proc_thres1, digit_proc_thres2 = sp.run_image_preprocess_MNIST(digit_imgs)
         digit_proc = sp.run_image_preprocess_MNIST(digit_imgs)
         #br_digit, holes_digit = fe.features_MNIST(digit_proc_thres1, digit_proc_thres2)
         features = fe.features_MNIST(digit_proc)
-        features_scale = scale(features, axis  = 0)
-        features_scale = features_scale.tolist()
-        feature_vals_digit = list(x[feature_num] for x in features_scale)
+        if scaled == True:
+            features_scale = scale(features, axis  = 0)
+            features_scale = features_scale.tolist()
+            feature_mx = features_scale
+        elif scaled == False:
+            feature_mx = features.tolist()
+        feature_vals_digit = list(x[feature_num] for x in feature_mx)
         feature_vals.append(feature_vals_digit)
         X = np.asarray(feature_vals_digit)
         #kde = KernelDensity(kernel = 'gaussian', bandwidth = 0.05).fit(X[:,np.newaxis])
@@ -65,7 +83,7 @@ def run_feature_extraction(feature_num,num_samples):
     plt.close()
 
     plt.figure(2)
-    fig, ax = plt.subplots(2, 5, figsize=(35,15), sharey=True, sharex = True)
+    fig, ax = plt.subplots(2, 5, figsize=(35,15)) #sharey=True, sharex = True)
     for i, axi in enumerate(ax.flat):
         axi.hist(feature_vals[i], **kwargs, label = "%d" %(digit), color = colors[i])
         axi.tick_params(labelsize = 28)
@@ -74,7 +92,7 @@ def run_feature_extraction(feature_num,num_samples):
         #axi.set_xlabel('Scaled blackness ratio [unitless]', fontsize = 12)
     #plt.tight_layout(wspace = 0.5, hspace = 0.5)
     plt.tight_layout()
-    fig.text(0.04, 0.5, 'Num. of occurences in %d samples' %(num_samples), va='center', rotation='vertical', fontsize = 36)
+    fig.text(0.02, 0.5, 'Num. of occurences in %d samples' %(num_samples), va='center', rotation='vertical', fontsize = 36)
     #plt.legend(loc = 'best', frameon = True, fontsize = 12)
     plt.suptitle(feature_names[feature_num], fontsize = 48, fontweight = 'bold')
     plt.subplots_adjust(top=0.9, wspace = 0.15, hspace = 0.25, left = 0.075)
@@ -83,7 +101,7 @@ def run_feature_extraction(feature_num,num_samples):
     #feature_vals = np.asarray(feature_vals)
     return
 
-def run_classification(num_train, num_valid):
+def run_classification(num_train, num_valid, test_set = 'valid'):
     train, valid, test = io.read_MNIST()
     # Use train_test_split to pick a random sampling of the training and validation sets
     train1, train2, train1_labels, train2_labels = train_test_split(train[0], train[1], train_size = num_train)
@@ -91,7 +109,13 @@ def run_classification(num_train, num_valid):
     ytrain = train1_labels
     digit_train_proc = sp.run_image_preprocess_MNIST(digit_imgs_train_np)
     Xtrain = fe.features_MNIST(digit_train_proc)
-    valid1, valid2, valid1_labels, valid2_labels = train_test_split(valid[0], valid[1], train_size = num_valid)
+    if test_set == 'valid':
+        valid1, valid2, valid1_labels, valid2_labels = train_test_split(valid[0], valid[1], train_size = num_valid)
+    elif test_set == 'test':
+        valid1, valid2, valid1_labels, valid2_labels = train_test_split(test[0], test[1], train_size = num_valid)
+    else:
+        print("Valid test_set strings are 'valid' for classifier validation and 'test' for final classifier testing.")
+        return
     digit_imgs_valid_np = [np.array(x).reshape(28,28) for x in valid1]
     yvalid = valid1_labels
     digit_valid_proc = sp.run_image_preprocess_MNIST(digit_imgs_valid_np)
@@ -148,9 +172,6 @@ def run_classification(num_train, num_valid):
         y_model = model.predict(Xvalid_scale)
         percent_corr.append(accuracy_score(yvalid, y_model))
         confusion_matrices.append(confusion_matrix(yvalid, y_model))
-        #precision.append(precision_score(yvalid, y_model, average = None))
-        #recall.append(recall_score(yvalid, y_model, average = None))
-        #f1.append(f1_score(yvalid, y_model, average = None))
         precision_classifier, recall_classifier, fscore_classifier, support_classifier =  precision_recall_fscore_support(yvalid, y_model)
         precisions.append(precision_classifier)
         recalls.append(recall_classifier)
@@ -158,7 +179,6 @@ def run_classification(num_train, num_valid):
         supports.append(support_classifier)
         estimators.append((model_strings[i], model))
         eclf = VotingClassifier(estimators = estimators, voting = 'hard')
-
     eclf.fit(Xtrain_scale, ytrain)
     y_model = eclf.predict(Xvalid_scale)
     percent_corr.append(accuracy_score(yvalid, y_model))
@@ -168,26 +188,18 @@ def run_classification(num_train, num_valid):
     recalls.append(recall_classifier)
     fscores.append(fscore_classifier)
     supports.append(support_classifier)
-    #precision.append(precision_score(yvalid, y_model, average = None))
-    #recall.append(recall_score(yvalid, y_model, average = None))
-    #f1.append(f1_score(yvalid, y_model, average = None))
-    #return percent_corr, confusion_matrices, precision, recall, f1
-    return percent_corr, confusion_matrices, precisions, recalls
+    return X, y, percent_corr, confusion_matrices, precisions, recalls
 
 def run_feature_ranking(num_train):
     train, valid, test = io.read_MNIST()
     # Use train_test_split to pick a random sampling of the training and validation sets
     train1, train2, train1_labels, train2_labels = train_test_split(train[0], train[1], train_size = num_train)
     digit_imgs_train_np = [np.array(x).reshape(28,28) for x in train1]
+    digit_imgs_train_np_w_rot = io.MNIST_add_rot(digit_imgs_train_np, 4, 15)
     ytrain = train1_labels
-    digit_train_proc = sp.run_image_preprocess_MNIST(digit_imgs_train_np)
+    digit_train_proc = sp.run_image_preprocess_MNIST(digit_imgs_train_np_w_rot)
     Xtrain = fe.features_MNIST(digit_train_proc)
     Xtrain_scale = scale(Xtrain, axis = 0)
-    #features = [
-    #'br', 'br_s1', 'br_s2', 'br_s3', 'br_s4', 'br_s5', 'br_s6',
-    #'holes', 'num_lines_img', 'max_line_length_img', 'max_line_length_top',
-    #'max_line_length_bottom', 'max_line_length_left', 'max_line_length_right'
-    #]
     visualizer1D = Rank1D(algorithm = 'shapiro')
     visualizer1D.fit(Xtrain_scale, ytrain)
     visualizer1D.transform(Xtrain_scale)
@@ -200,6 +212,7 @@ def run_feature_ranking(num_train):
     visualizer2D_p.fit(Xtrain_scale, ytrain)
     visualizer2D_p.transform(Xtrain_scale)
     visualizer2D_p.poof()
+    return digit_imgs_train_np, digit_imgs_train_np_w_rot
 
 def run_fine_tune_classification(num_train, num_valid):
     train, valid, test = io.read_MNIST()
@@ -238,3 +251,19 @@ def report(results, n_top=3):
                   results['std_test_score'][candidate]))
             print("Parameters: {0}".format(results['params'][candidate]))
             print("")
+
+def run_manifold_projection(n_comps, feature_mx, label_vec):
+    iso = Isomap(2, n_components = n_comps)
+    projection = iso.fit_transform(np.hstack((feature_mx, label_vec.reshape((label_vec.shape[0], 1)))))
+    plt.close('all')
+
+    if n_comps == 2:
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+        p = ax.scatter(projection[:,0], projection[:,1], c = label_vec, cmap = plt.cm.get_cmap('tab10', len(label_vec)), facecolor = 'none')
+    elif n_comps ==3:
+        fig = plt.figure()
+        ax = fig.add_subplot(111, projection = '3d')
+        p = ax.scatter(projection[:,0], projection[:,1], projection[:,2],  c = label_vec, cmap = plt.cm.get_cmap('tab10', len(label_vec)), facecolor = 'none')
+    fig.colorbar(p, ticks = range(10), label = 'digit')
+    plt.show()
