@@ -35,7 +35,7 @@ def MNIST_sort(MNIST_dataset, digit, subset_len):
     digit_imgs_np = [np.array(x).reshape(28,28) for x in digit_imgs]
     return digit_imgs_np, indices
 
-def MNIST_add_rot(np_list_MNISTimgs, num_rot_imgs, rot_step):
+def MNIST_add_rot(np_list_MNISTimgs, ytrain, num_rot_imgs, rot_step):
     if (num_rot_imgs) % 2 != 0:
         print("Number of rotated images to be added to the MNIST data set must be even.")
         return
@@ -45,8 +45,10 @@ def MNIST_add_rot(np_list_MNISTimgs, num_rot_imgs, rot_step):
     rots = np.linspace(-(num_rot_imgs/2)*rot_step, (num_rot_imgs/2)*rot_step, num_rot_imgs + 1)
     rots = np.delete(rots, (num_rot_imgs/2))
     np_list_MNISTimgs_w_rot = np_list_MNISTimgs[:]
-    for MNISTimg in np_list_MNISTimgs:
+    ytrain_w_rot = ytrain[:]
+    for i, MNISTimg in enumerate(np_list_MNISTimgs):
         for rot in rots:
             rot_img = rotate(MNISTimg, rot)
             np_list_MNISTimgs_w_rot.append(rot_img)
-    return np_list_MNISTimgs_w_rot
+            ytrain_w_rot = np.append(ytrain_w_rot, ytrain[i])
+    return np_list_MNISTimgs_w_rot, ytrain_w_rot

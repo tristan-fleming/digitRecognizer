@@ -397,3 +397,7 @@ def features_MNIST(np_list_imgs_MNIST):
     features = np.concatenate((features, hog_features), axis =1)
     # Transform features by scaling each feature to a given range
     return features
+
+def pixel_features_MNIST(np_list_imgs_MNIST):
+    features = [x.flatten('C') for x in np_list_imgs_MNIST]
+    return features

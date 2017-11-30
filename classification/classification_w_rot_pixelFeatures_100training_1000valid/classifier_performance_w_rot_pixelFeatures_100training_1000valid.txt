@@ -1,0 +1,297 @@
+Classifier results for 100 training samples with additional rotated copies and 1000 validation samples 
+Pixel features were used 
+Validated on 2017-11-23 
+
+Classifier KNeighboursClassifier: 3 neighbours, uniform weighting classified 64.30 % of the 1000 validation samples correctly
+
+The precision and recall for each of the ten digit classes was:
+Digit: 0, Precision: 84.52 %, Recall: 81.61 %
+Digit: 1, Precision: 51.27 %, Recall: 98.06 %
+Digit: 2, Precision: 100.00 %, Recall: 20.41 %
+Digit: 3, Precision: 63.92 %, Recall: 57.41 %
+Digit: 4, Precision: 64.52 %, Recall: 60.61 %
+Digit: 5, Precision: 62.50 %, Recall: 53.19 %
+Digit: 6, Precision: 77.23 %, Recall: 86.67 %
+Digit: 7, Precision: 73.33 %, Recall: 49.55 %
+Digit: 8, Precision: 67.09 %, Recall: 54.08 %
+Digit: 9, Precision: 53.45 %, Recall: 83.04 %
+
+Classifier KNeighboursClassifier: 3 neighbours, weighted by distance classified 64.00 % of the 1000 validation samples correctly
+
+The precision and recall for each of the ten digit classes was:
+Digit: 0, Precision: 92.21 %, Recall: 81.61 %
+Digit: 1, Precision: 56.74 %, Recall: 98.06 %
+Digit: 2, Precision: 100.00 %, Recall: 13.27 %
+Digit: 3, Precision: 63.83 %, Recall: 55.56 %
+Digit: 4, Precision: 67.05 %, Recall: 59.60 %
+Digit: 5, Precision: 59.30 %, Recall: 54.26 %
+Digit: 6, Precision: 73.83 %, Recall: 87.78 %
+Digit: 7, Precision: 71.95 %, Recall: 53.15 %
+Digit: 8, Precision: 62.07 %, Recall: 55.10 %
+Digit: 9, Precision: 49.47 %, Recall: 83.04 %
+
+Classifier KNeighboursClassifier: 5 neighbours, uniform weighting classified 63.60 % of the 1000 validation samples correctly
+
+The precision and recall for each of the ten digit classes was:
+Digit: 0, Precision: 85.06 %, Recall: 85.06 %
+Digit: 1, Precision: 48.57 %, Recall: 99.03 %
+Digit: 2, Precision: 100.00 %, Recall: 13.27 %
+Digit: 3, Precision: 62.63 %, Recall: 57.41 %
+Digit: 4, Precision: 66.22 %, Recall: 49.49 %
+Digit: 5, Precision: 62.82 %, Recall: 52.13 %
+Digit: 6, Precision: 79.59 %, Recall: 86.67 %
+Digit: 7, Precision: 72.09 %, Recall: 55.86 %
+Digit: 8, Precision: 65.00 %, Recall: 53.06 %
+Digit: 9, Precision: 54.29 %, Recall: 84.82 %
+
+Classifier KNeighboursClassifier: 5 neighbours, weighted by distance classified 63.50 % of the 1000 validation samples correctly
+
+The precision and recall for each of the ten digit classes was:
+Digit: 0, Precision: 91.25 %, Recall: 83.91 %
+Digit: 1, Precision: 50.50 %, Recall: 99.03 %
+Digit: 2, Precision: 100.00 %, Recall: 12.24 %
+Digit: 3, Precision: 62.63 %, Recall: 57.41 %
+Digit: 4, Precision: 69.12 %, Recall: 47.47 %
+Digit: 5, Precision: 61.04 %, Recall: 50.00 %
+Digit: 6, Precision: 76.70 %, Recall: 87.78 %
+Digit: 7, Precision: 73.49 %, Recall: 54.95 %
+Digit: 8, Precision: 62.79 %, Recall: 55.10 %
+Digit: 9, Precision: 51.58 %, Recall: 87.50 %
+
+Classifier KNeighboursClassifier: 7 neighbours, uniform weighting classified 61.80 % of the 1000 validation samples correctly
+
+The precision and recall for each of the ten digit classes was:
+Digit: 0, Precision: 84.88 %, Recall: 83.91 %
+Digit: 1, Precision: 42.86 %, Recall: 99.03 %
+Digit: 2, Precision: 100.00 %, Recall: 11.22 %
+Digit: 3, Precision: 61.54 %, Recall: 51.85 %
+Digit: 4, Precision: 69.01 %, Recall: 49.49 %
+Digit: 5, Precision: 61.54 %, Recall: 42.55 %
+Digit: 6, Precision: 77.23 %, Recall: 86.67 %
+Digit: 7, Precision: 75.61 %, Recall: 55.86 %
+Digit: 8, Precision: 67.57 %, Recall: 51.02 %
+Digit: 9, Precision: 53.59 %, Recall: 86.61 %
+
+Classifier KNeighboursClassifier: 7 neighbours, weighted by distance classified 61.60 % of the 1000 validation samples correctly
+
+The precision and recall for each of the ten digit classes was:
+Digit: 0, Precision: 90.12 %, Recall: 83.91 %
+Digit: 1, Precision: 45.74 %, Recall: 99.03 %
+Digit: 2, Precision: 100.00 %, Recall: 10.20 %
+Digit: 3, Precision: 59.34 %, Recall: 50.00 %
+Digit: 4, Precision: 74.60 %, Recall: 47.47 %
+Digit: 5, Precision: 60.56 %, Recall: 45.74 %
+Digit: 6, Precision: 74.53 %, Recall: 87.78 %
+Digit: 7, Precision: 73.17 %, Recall: 54.05 %
+Digit: 8, Precision: 64.10 %, Recall: 51.02 %
+Digit: 9, Precision: 50.26 %, Recall: 87.50 %
+
+Classifier KNeighboursClassifier: 9 neighbours, uniform weighting classified 60.90 % of the 1000 validation samples correctly
+
+The precision and recall for each of the ten digit classes was:
+Digit: 0, Precision: 87.21 %, Recall: 86.21 %
+Digit: 1, Precision: 40.64 %, Recall: 99.03 %
+Digit: 2, Precision: 100.00 %, Recall: 9.18 %
+Digit: 3, Precision: 65.43 %, Recall: 49.07 %
+Digit: 4, Precision: 67.12 %, Recall: 49.49 %
+Digit: 5, Precision: 63.49 %, Recall: 42.55 %
+Digit: 6, Precision: 77.67 %, Recall: 88.89 %
+Digit: 7, Precision: 72.15 %, Recall: 51.35 %
+Digit: 8, Precision: 64.47 %, Recall: 50.00 %
+Digit: 9, Precision: 53.07 %, Recall: 84.82 %
+
+Classifier KNeighboursClassifier: 9 neighbours, weighted by distance classified 61.70 % of the 1000 validation samples correctly
+
+The precision and recall for each of the ten digit classes was:
+Digit: 0, Precision: 89.16 %, Recall: 85.06 %
+Digit: 1, Precision: 43.97 %, Recall: 99.03 %
+Digit: 2, Precision: 100.00 %, Recall: 9.18 %
+Digit: 3, Precision: 65.06 %, Recall: 50.00 %
+Digit: 4, Precision: 72.58 %, Recall: 45.45 %
+Digit: 5, Precision: 63.77 %, Recall: 46.81 %
+Digit: 6, Precision: 75.47 %, Recall: 88.89 %
+Digit: 7, Precision: 75.00 %, Recall: 51.35 %
+Digit: 8, Precision: 61.73 %, Recall: 51.02 %
+Digit: 9, Precision: 51.26 %, Recall: 91.07 %
+
+Classifier KNeighboursClassifier: 11 neighbours, uniform weighting classified 60.00 % of the 1000 validation samples correctly
+
+The precision and recall for each of the ten digit classes was:
+Digit: 0, Precision: 83.91 %, Recall: 83.91 %
+Digit: 1, Precision: 38.58 %, Recall: 100.00 %
+Digit: 2, Precision: 100.00 %, Recall: 5.10 %
+Digit: 3, Precision: 68.57 %, Recall: 44.44 %
+Digit: 4, Precision: 68.18 %, Recall: 45.45 %
+Digit: 5, Precision: 67.69 %, Recall: 46.81 %
+Digit: 6, Precision: 80.00 %, Recall: 88.89 %
+Digit: 7, Precision: 74.07 %, Recall: 54.05 %
+Digit: 8, Precision: 62.67 %, Recall: 47.96 %
+Digit: 9, Precision: 51.63 %, Recall: 84.82 %
+
+Classifier KNeighboursClassifier: 11 neighbours, weighted by distance classified 60.40 % of the 1000 validation samples correctly
+
+The precision and recall for each of the ten digit classes was:
+Digit: 0, Precision: 90.12 %, Recall: 83.91 %
+Digit: 1, Precision: 40.55 %, Recall: 100.00 %
+Digit: 2, Precision: 100.00 %, Recall: 4.08 %
+Digit: 3, Precision: 65.33 %, Recall: 45.37 %
+Digit: 4, Precision: 74.19 %, Recall: 46.46 %
+Digit: 5, Precision: 66.67 %, Recall: 46.81 %
+Digit: 6, Precision: 79.80 %, Recall: 87.78 %
+Digit: 7, Precision: 74.36 %, Recall: 52.25 %
+Digit: 8, Precision: 60.00 %, Recall: 48.98 %
+Digit: 9, Precision: 49.75 %, Recall: 89.29 %
+
+Classifier DecisionTreeClassifer: max depth of 7 classified 52.10 % of the 1000 validation samples correctly
+
+The precision and recall for each of the ten digit classes was:
+Digit: 0, Precision: 71.43 %, Recall: 74.71 %
+Digit: 1, Precision: 65.03 %, Recall: 90.29 %
+Digit: 2, Precision: 43.48 %, Recall: 10.20 %
+Digit: 3, Precision: 55.36 %, Recall: 57.41 %
+Digit: 4, Precision: 38.13 %, Recall: 53.54 %
+Digit: 5, Precision: 40.00 %, Recall: 44.68 %
+Digit: 6, Precision: 48.19 %, Recall: 44.44 %
+Digit: 7, Precision: 57.81 %, Recall: 66.67 %
+Digit: 8, Precision: 45.61 %, Recall: 26.53 %
+Digit: 9, Precision: 47.06 %, Recall: 50.00 %
+
+Classifier RandomForestClassifier: max depth of 5, 10 estimators classified 54.50 % of the 1000 validation samples correctly
+
+The precision and recall for each of the ten digit classes was:
+Digit: 0, Precision: 79.31 %, Recall: 79.31 %
+Digit: 1, Precision: 60.37 %, Recall: 96.12 %
+Digit: 2, Precision: 0.00 %, Recall: 0.00 %
+Digit: 3, Precision: 57.58 %, Recall: 52.78 %
+Digit: 4, Precision: 31.58 %, Recall: 24.24 %
+Digit: 5, Precision: 51.35 %, Recall: 60.64 %
+Digit: 6, Precision: 53.78 %, Recall: 71.11 %
+Digit: 7, Precision: 56.76 %, Recall: 75.68 %
+Digit: 8, Precision: 55.17 %, Recall: 16.33 %
+Digit: 9, Precision: 44.91 %, Recall: 66.96 %
+
+Classifier SupportVectorMachines: C-Support Vector Classification, 'linear' kernel, C = default (1.0) classified 71.50 % of the 1000 validation samples correctly
+
+The precision and recall for each of the ten digit classes was:
+Digit: 0, Precision: 82.50 %, Recall: 75.86 %
+Digit: 1, Precision: 77.17 %, Recall: 95.15 %
+Digit: 2, Precision: 82.00 %, Recall: 41.84 %
+Digit: 3, Precision: 65.44 %, Recall: 82.41 %
+Digit: 4, Precision: 62.69 %, Recall: 84.85 %
+Digit: 5, Precision: 60.82 %, Recall: 62.77 %
+Digit: 6, Precision: 75.51 %, Recall: 82.22 %
+Digit: 7, Precision: 77.88 %, Recall: 72.97 %
+Digit: 8, Precision: 68.06 %, Recall: 50.00 %
+Digit: 9, Precision: 72.55 %, Recall: 66.07 %
+
+Classifier SupportVectorMachines: C-Support Vector Classification, 'linear' kernel, C = 0.25 classified 71.50 % of the 1000 validation samples correctly
+
+The precision and recall for each of the ten digit classes was:
+Digit: 0, Precision: 82.50 %, Recall: 75.86 %
+Digit: 1, Precision: 77.17 %, Recall: 95.15 %
+Digit: 2, Precision: 82.00 %, Recall: 41.84 %
+Digit: 3, Precision: 65.44 %, Recall: 82.41 %
+Digit: 4, Precision: 62.69 %, Recall: 84.85 %
+Digit: 5, Precision: 60.82 %, Recall: 62.77 %
+Digit: 6, Precision: 75.51 %, Recall: 82.22 %
+Digit: 7, Precision: 77.88 %, Recall: 72.97 %
+Digit: 8, Precision: 68.06 %, Recall: 50.00 %
+Digit: 9, Precision: 72.55 %, Recall: 66.07 %
+
+Classifier SupportVectorMachines: C-Support Vector Classification, 'linear' kernel, C = 0.025 classified 71.50 % of the 1000 validation samples correctly
+
+The precision and recall for each of the ten digit classes was:
+Digit: 0, Precision: 82.50 %, Recall: 75.86 %
+Digit: 1, Precision: 77.17 %, Recall: 95.15 %
+Digit: 2, Precision: 82.00 %, Recall: 41.84 %
+Digit: 3, Precision: 65.44 %, Recall: 82.41 %
+Digit: 4, Precision: 62.69 %, Recall: 84.85 %
+Digit: 5, Precision: 60.82 %, Recall: 62.77 %
+Digit: 6, Precision: 75.51 %, Recall: 82.22 %
+Digit: 7, Precision: 77.88 %, Recall: 72.97 %
+Digit: 8, Precision: 68.06 %, Recall: 50.00 %
+Digit: 9, Precision: 72.55 %, Recall: 66.07 %
+
+Classifier SupportVectorMachines: Linear Support Vector Classification, 'ovr' one-vs-rest multi-class strategy, C = default (1.0) classified 55.80 % of the 1000 validation samples correctly
+
+The precision and recall for each of the ten digit classes was:
+Digit: 0, Precision: 76.19 %, Recall: 55.17 %
+Digit: 1, Precision: 68.31 %, Recall: 94.17 %
+Digit: 2, Precision: 63.16 %, Recall: 12.24 %
+Digit: 3, Precision: 51.54 %, Recall: 62.04 %
+Digit: 4, Precision: 46.77 %, Recall: 58.59 %
+Digit: 5, Precision: 42.03 %, Recall: 30.85 %
+Digit: 6, Precision: 67.26 %, Recall: 84.44 %
+Digit: 7, Precision: 59.09 %, Recall: 58.56 %
+Digit: 8, Precision: 38.78 %, Recall: 38.78 %
+Digit: 9, Precision: 51.52 %, Recall: 60.71 %
+
+Classifier SupportVectorMachines: Linear Support Vector Classification, 'ovr' one-vs-rest multi-class strategy, C = 0.25 classified 56.10 % of the 1000 validation samples correctly
+
+The precision and recall for each of the ten digit classes was:
+Digit: 0, Precision: 78.69 %, Recall: 55.17 %
+Digit: 1, Precision: 68.31 %, Recall: 94.17 %
+Digit: 2, Precision: 65.00 %, Recall: 13.27 %
+Digit: 3, Precision: 51.91 %, Recall: 62.96 %
+Digit: 4, Precision: 46.34 %, Recall: 57.58 %
+Digit: 5, Precision: 41.43 %, Recall: 30.85 %
+Digit: 6, Precision: 67.26 %, Recall: 84.44 %
+Digit: 7, Precision: 60.00 %, Recall: 59.46 %
+Digit: 8, Precision: 38.54 %, Recall: 37.76 %
+Digit: 9, Precision: 52.24 %, Recall: 62.50 %
+
+Classifier SupportVectorMachines: Linear Support Vector Classification, 'ovr' one-vs-rest multi-class strategy, C = 0.025 classified 57.60 % of the 1000 validation samples correctly
+
+The precision and recall for each of the ten digit classes was:
+Digit: 0, Precision: 80.00 %, Recall: 59.77 %
+Digit: 1, Precision: 68.09 %, Recall: 93.20 %
+Digit: 2, Precision: 68.18 %, Recall: 15.31 %
+Digit: 3, Precision: 55.40 %, Recall: 71.30 %
+Digit: 4, Precision: 49.57 %, Recall: 57.58 %
+Digit: 5, Precision: 38.89 %, Recall: 29.79 %
+Digit: 6, Precision: 64.46 %, Recall: 86.67 %
+Digit: 7, Precision: 57.66 %, Recall: 57.66 %
+Digit: 8, Precision: 42.35 %, Recall: 36.73 %
+Digit: 9, Precision: 56.59 %, Recall: 65.18 %
+
+Classifier SupportVectorMachines: Linear Support Vector Classification, 'crammer_singer' joint objective over all classes multi-class strategy, C = default (1.0) classified 67.80 % of the 1000 validation samples correctly
+
+The precision and recall for each of the ten digit classes was:
+Digit: 0, Precision: 76.62 %, Recall: 67.82 %
+Digit: 1, Precision: 73.88 %, Recall: 96.12 %
+Digit: 2, Precision: 93.75 %, Recall: 30.61 %
+Digit: 3, Precision: 71.67 %, Recall: 79.63 %
+Digit: 4, Precision: 61.90 %, Recall: 78.79 %
+Digit: 5, Precision: 58.90 %, Recall: 45.74 %
+Digit: 6, Precision: 74.77 %, Recall: 88.89 %
+Digit: 7, Precision: 68.42 %, Recall: 70.27 %
+Digit: 8, Precision: 60.92 %, Recall: 54.08 %
+Digit: 9, Precision: 55.38 %, Recall: 64.29 %
+
+Classifier Neural network: Multi-layer Perceptron Classifier, L2 penalty alpha = 1 classified 73.40 % of the 1000 validation samples correctly
+
+The precision and recall for each of the ten digit classes was:
+Digit: 0, Precision: 82.50 %, Recall: 75.86 %
+Digit: 1, Precision: 75.57 %, Recall: 96.12 %
+Digit: 2, Precision: 93.94 %, Recall: 31.63 %
+Digit: 3, Precision: 72.80 %, Recall: 84.26 %
+Digit: 4, Precision: 69.83 %, Recall: 81.82 %
+Digit: 5, Precision: 72.15 %, Recall: 60.64 %
+Digit: 6, Precision: 69.49 %, Recall: 91.11 %
+Digit: 7, Precision: 79.05 %, Recall: 74.77 %
+Digit: 8, Precision: 67.42 %, Recall: 61.22 %
+Digit: 9, Precision: 67.74 %, Recall: 75.00 %
+
+Classifier VotingClassifier: All of the above 19 classifiers with 'hard' voting classified 68.30 % of the 1000 validation samples correctly
+
+The precision and recall for each of the ten digit classes was:
+Digit: 0, Precision: 87.21 %, Recall: 86.21 %
+Digit: 1, Precision: 49.51 %, Recall: 99.03 %
+Digit: 2, Precision: 94.74 %, Recall: 18.37 %
+Digit: 3, Precision: 69.23 %, Recall: 66.67 %
+Digit: 4, Precision: 72.41 %, Recall: 63.64 %
+Digit: 5, Precision: 72.22 %, Recall: 55.32 %
+Digit: 6, Precision: 79.00 %, Recall: 87.78 %
+Digit: 7, Precision: 77.78 %, Recall: 69.37 %
+Digit: 8, Precision: 69.01 %, Recall: 50.00 %
+Digit: 9, Precision: 61.54 %, Recall: 85.71 %

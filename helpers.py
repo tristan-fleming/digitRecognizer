@@ -19,11 +19,13 @@ def plot_hist(digit_list):
         plt.plot(bincenters,y,'-')
     plt.show()
 
-def plot_confusion_matrices(confusion_matrices):
+def plot_confusion_matrices(confusion_matrices, name):
     for i, confusion_mx in enumerate(confusion_matrices):
         row_sums = confusion_mx.sum(axis = 1, keepdims = True)
         norm_conf_mx = confusion_mx/row_sums
         np.fill_diagonal(norm_conf_mx,0)
-        plt.matshow(norm_conf_mx, cmap= plt.cm.gray)
-        plt.savefig("classifier_num%d_confusionMx.png" % (i))
+        fig, ax = plt.subplots()
+        ax.matshow(norm_conf_mx, cmap= plt.cm.gray)
+        ax.grid(False)
+        fig.savefig("classification/{0}_classifier_num{1}_confusionMx.png".format(name, i))
         plt.close()

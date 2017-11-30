@@ -3,10 +3,12 @@
 import image_open as io
 import simple_preprocess as sp
 import feature_extractor as fe
+import helpers as h
 
 #Import functionality from python packages
 
 import numpy as np
+from datetime import datetime
 from sklearn.preprocessing import scale
 from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier, KernelDensity
@@ -101,14 +103,18 @@ def run_feature_extraction(feature_num, num_samples, scaled = False):
     #feature_vals = np.asarray(feature_vals)
     return
 
-def run_classification(num_train, num_valid, test_set = 'valid'):
+def run_classification(num_train, num_valid, test_set = 'valid', incl_rot = False, pixel_features = False):
     train, valid, test = io.read_MNIST()
     # Use train_test_split to pick a random sampling of the training and validation sets
     train1, train2, train1_labels, train2_labels = train_test_split(train[0], train[1], train_size = num_train)
     digit_imgs_train_np = [np.array(x).reshape(28,28) for x in train1]
     ytrain = train1_labels
-    digit_train_proc = sp.run_image_preprocess_MNIST(digit_imgs_train_np)
-    Xtrain = fe.features_MNIST(digit_train_proc)
+    if incl_rot == True:
+        digit_imgs_train_np_w_rot, ytrain = io.MNIST_add_rot(digit_imgs_train_np, ytrain, 8, 10)
+        digit_train_proc = sp.run_image_preprocess_MNIST(digit_imgs_train_np_w_rot)
+    elif incl_rot == False:
+        digit_train_proc = sp.run_image_preprocess_MNIST(digit_imgs_train_np)
+
     if test_set == 'valid':
         valid1, valid2, valid1_labels, valid2_labels = train_test_split(valid[0], valid[1], train_size = num_valid)
     elif test_set == 'test':
@@ -119,7 +125,13 @@ def run_classification(num_train, num_valid, test_set = 'valid'):
     digit_imgs_valid_np = [np.array(x).reshape(28,28) for x in valid1]
     yvalid = valid1_labels
     digit_valid_proc = sp.run_image_preprocess_MNIST(digit_imgs_valid_np)
-    Xvalid = fe.features_MNIST(digit_valid_proc)
+
+    if pixel_features == True:
+        Xtrain = fe.pixel_features_MNIST(digit_train_proc)
+        Xvalid = fe.pixel_features_MNIST(digit_valid_proc)
+    elif pixel_features == False:
+        Xtrain = fe.features_MNIST(digit_train_proc)
+        Xvalid = fe.features_MNIST(digit_valid_proc)
     #min_max_scaler = MinMaxScaler()
     Xvalid_scale = scale(Xvalid, axis = 0)
     Xtrain_scale = scale(Xtrain, axis = 0)
@@ -167,6 +179,27 @@ def run_classification(num_train, num_valid, test_set = 'valid'):
         'dt5ne10','rf','svc_lin','svc_lin_c025','svc_lin_c0025',
         'lin_svc_ovr','lin_svc_ovr_c025','lin_svc_ovr_c0025',
         'lin_svc_cramm','ada_boost','qda']
+    model_strings = ["KNeighboursClassifier: 3 neighbours, uniform weighting",
+                     "KNeighboursClassifier: 3 neighbours, weighted by distance",
+                     "KNeighboursClassifier: 5 neighbours, uniform weighting",
+                     "KNeighboursClassifier: 5 neighbours, weighted by distance",
+                     "KNeighboursClassifier: 7 neighbours, uniform weighting",
+                     "KNeighboursClassifier: 7 neighbours, weighted by distance",
+                     "KNeighboursClassifier: 9 neighbours, uniform weighting",
+                     "KNeighboursClassifier: 9 neighbours, weighted by distance",
+                     "KNeighboursClassifier: 11 neighbours, uniform weighting",
+                     "KNeighboursClassifier: 11 neighbours, weighted by distance",
+                     "DecisionTreeClassifer: max depth of 7",
+                     "RandomForestClassifier: max depth of 5, 10 estimators",
+                     "SupportVectorMachines: C-Support Vector Classification, 'linear' kernel, C = default (1.0)",
+                     "SupportVectorMachines: C-Support Vector Classification, 'linear' kernel, C = 0.25",
+                     "SupportVectorMachines: C-Support Vector Classification, 'linear' kernel, C = 0.025",
+                     "SupportVectorMachines: Linear Support Vector Classification, 'ovr' one-vs-rest multi-class strategy, C = default (1.0)",
+                     "SupportVectorMachines: Linear Support Vector Classification, 'ovr' one-vs-rest multi-class strategy, C = 0.25",
+                     "SupportVectorMachines: Linear Support Vector Classification, 'ovr' one-vs-rest multi-class strategy, C = 0.025",
+                     "SupportVectorMachines: Linear Support Vector Classification, 'crammer_singer' joint objective over all classes multi-class strategy, C = default (1.0)",
+                     "Neural network: Multi-layer Perceptron Classifier, L2 penalty alpha = 1",
+                     "VotingClassifier: All of the above 19 classifiers with 'hard' voting"]
     for i,model in enumerate(models):
         model.fit(Xtrain_scale, ytrain)
         y_model = model.predict(Xvalid_scale)
@@ -188,17 +221,61 @@ def run_classification(num_train, num_valid, test_set = 'valid'):
     recalls.append(recall_classifier)
     fscores.append(fscore_classifier)
     supports.append(support_classifier)
-    return X, y, percent_corr, confusion_matrices, precisions, recalls
 
-def run_feature_ranking(num_train):
+    if incl_rot == True:
+        if pixel_features == True:
+            name = "classifier_performance_w_rot_pixelFeatures_{0}training_{1}valid".format(num_train, num_valid)
+        elif pixel_features == False:
+            name = "classifier_performance_w_rot_{0}training_{1}valid".format(num_train, num_valid)
+    elif incl_rot == False:
+        if pixel_features == True:
+            name = "classifier_performance_wo_rot_pixelFeatures_{0}training_{1}valid".format(num_train, num_valid)
+        elif pixel_features == False:
+            name = "classifier_performance_wo_rot_{0}training_{1}valid".format(num_train, num_valid)
+
+    directory = "classification"
+
+    with open('{0}/{1}.txt'.format(str(directory),str(name)), 'w') as handler:
+        if incl_rot == True:
+            handler.write("Classifier results for {0} training samples with additional rotated copies and {1} validation samples \n".format(num_train, num_valid))
+        elif incl_rot == False:
+            handler.write("Classifier results for {0} training samples without additional rotated copies and {1} validation samples \n".format(num_train, num_valid))
+        if pixel_features == True:
+            handler.write("Pixel features were used \n")
+        elif pixel_features == False:
+            handler.write("Pixel features were not used \n")
+        handler.write("Validated on {0} \n".format(datetime.now().strftime('%Y-%m-%d')))
+        for i, classifier in enumerate(percent_corr):
+            handler.write("\nClassifier {0} classified {1:.2f} % of the {2} validation samples correctly\n".format(model_strings[i], percent_corr[i]*100, num_valid))
+            handler.write("\nThe precision and recall for each of the ten digit classes was:\n")
+            for digitClass, digitClass_prec in enumerate(precisions[i]):
+                handler.write("Digit: {0}, Precision: {1:.2f} %, Recall: {2:.2f} %\n".format(digitClass, digitClass_prec*100, recalls[i][digitClass]*100))
+
+    h.plot_confusion_matrices(confusion_matrices, name)
+
+    return None
+
+def run_feature_ranking(num_train, incl_rot = False, pixel_features = False):
     train, valid, test = io.read_MNIST()
     # Use train_test_split to pick a random sampling of the training and validation sets
     train1, train2, train1_labels, train2_labels = train_test_split(train[0], train[1], train_size = num_train)
     digit_imgs_train_np = [np.array(x).reshape(28,28) for x in train1]
-    digit_imgs_train_np_w_rot = io.MNIST_add_rot(digit_imgs_train_np, 4, 15)
+
     ytrain = train1_labels
-    digit_train_proc = sp.run_image_preprocess_MNIST(digit_imgs_train_np_w_rot)
-    Xtrain = fe.features_MNIST(digit_train_proc)
+
+    if incl_rot == True:
+        digit_imgs_train_np_w_rot, ytrain = io.MNIST_add_rot(digit_imgs_train_np, ytrain, 8, 10)
+        digit_train_proc = sp.run_image_preprocess_MNIST(digit_imgs_train_np_w_rot)
+    elif incl_rot == False:
+        digit_train_proc = sp.run_image_preprocess_MNIST(digit_imgs_train_np)
+
+
+
+    if pixel_features == True:
+        Xtrain = fe.pixel_features_MNIST(digit_train_proc)
+    elif pixel_features == False:
+        Xtrain = fe.features_MNIST(digit_train_proc)
+
     Xtrain_scale = scale(Xtrain, axis = 0)
     visualizer1D = Rank1D(algorithm = 'shapiro')
     visualizer1D.fit(Xtrain_scale, ytrain)
@@ -212,7 +289,7 @@ def run_feature_ranking(num_train):
     visualizer2D_p.fit(Xtrain_scale, ytrain)
     visualizer2D_p.transform(Xtrain_scale)
     visualizer2D_p.poof()
-    return digit_imgs_train_np, digit_imgs_train_np_w_rot
+    return None
 
 def run_fine_tune_classification(num_train, num_valid):
     train, valid, test = io.read_MNIST()
@@ -239,7 +316,7 @@ def run_fine_tune_classification(num_train, num_valid):
     grid_search = GridSearchCV(clf, param_grid = param_grid_KNN)
     grid_search.fit(Xtrain_scale, ytrain)
     report(grid_search.cv_results_)
-    return
+    return None
 
 def report(results, n_top=3):
     for i in range(1, n_top + 1):
@@ -251,6 +328,7 @@ def report(results, n_top=3):
                   results['std_test_score'][candidate]))
             print("Parameters: {0}".format(results['params'][candidate]))
             print("")
+    return None
 
 def run_manifold_projection(n_comps, feature_mx, label_vec):
     iso = Isomap(2, n_components = n_comps)
@@ -267,3 +345,4 @@ def run_manifold_projection(n_comps, feature_mx, label_vec):
         p = ax.scatter(projection[:,0], projection[:,1], projection[:,2],  c = label_vec, cmap = plt.cm.get_cmap('tab10', len(label_vec)), facecolor = 'none')
     fig.colorbar(p, ticks = range(10), label = 'digit')
     plt.show()
+    return None
