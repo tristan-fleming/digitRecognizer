@@ -2,13 +2,15 @@ import numpy as np
 from scipy import misc
 import matplotlib.pyplot as plt
 
+
 def find_fg_points(img_np, fg_val=1):
     """Returns all "foreground points"
     of a given 2-D numpy matrix"""
     fg_list = list()
-    fg_list = [i for i,x in np.ndenumerate(img_np) if x == fg_val]
+    fg_list = [i for i, x in np.ndenumerate(img_np) if x == fg_val]
 
     return fg_list
+
 
 def get_shapes(points, num_neighbours):
     """ Gets a list of all shape objects in the slice. """
@@ -25,6 +27,7 @@ def get_shapes(points, num_neighbours):
             points.remove(point)
 
     return shape_points_list
+
 
 def flood_fill(points_list, origin, num_neighbours, ordered=False):
     """Black and white flood fill algorithm operating on the given set of
@@ -75,6 +78,7 @@ def flood_fill(points_list, origin, num_neighbours, ordered=False):
             row, col = stack.pop()
 
     return shape
+
 
 def move_list(num_neighbours):
     """ List of moves you can make for 8 way floodfill algorithm"""

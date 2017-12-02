@@ -2,30 +2,34 @@ import matplotlib.pyplot as plt
 from scipy import misc
 import numpy as np
 
+
 def plot_points(arr):
     """ Plots a scatter plot from a list of tuples """
     # Makes 2 arrays of each x,y coord
-    x,y = zip(*arr)
-
-    plt.scatter(x,y,marker=',')
+    x, y = zip(*arr)
+    plt.scatter(x, y, marker=',')
     plt.show()
+
 
 def plot_hist(digit_list):
     """ Takes in list of lists where each sub list contains some feature
     value for the digit of its index """
     for feature_list in digit_list:
-        y,binEdges = np.histogram(feature_list)
+        y, binEdges = np.histogram(feature_list)
         bincenters = 0.5*(binEdges[1:]+binEdges[:-1])
-        plt.plot(bincenters,y,'-')
+        plt.plot(bincenters, y, '-')
     plt.show()
 
+
 def plot_confusion_matrices(confusion_matrices, name):
+    '''Plots each confusion matrix in "confusion_matrices" to a file denoted by
+    the classifier name "name"'''
     for i, confusion_mx in enumerate(confusion_matrices):
-        row_sums = confusion_mx.sum(axis = 1, keepdims = True)
+        row_sums = confusion_mx.sum(axis=1, keepdims=True)
         norm_conf_mx = confusion_mx/row_sums
-        np.fill_diagonal(norm_conf_mx,0)
+        np.fill_diagonal(norm_conf_mx, 0)
         fig, ax = plt.subplots()
-        ax.matshow(norm_conf_mx, cmap= plt.cm.gray)
+        ax.matshow(norm_conf_mx, cmap=plt.cm.gray)
         ax.grid(False)
         fig.savefig("classification/{0}_classifier_num{1}_confusionMx.png".format(name, i))
         plt.close()
