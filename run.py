@@ -223,7 +223,7 @@ def run_classification(num_train, num_valid, test_set='valid', incl_rot=False, p
             name = "classifier_performance_w_rot_pixelFeatures_{0}training_{1}valid".format(num_train, num_valid)
         elif not pixel_features:
             name = "classifier_performance_w_rot_{0}training_{1}valid".format(num_train, num_valid)
-    elif incl_rot:
+    elif not incl_rot:
         if pixel_features:
             name = "classifier_performance_wo_rot_pixelFeatures_{0}training_{1}valid".format(num_train, num_valid)
         elif not pixel_features:

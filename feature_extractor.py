@@ -254,7 +254,7 @@ def num_holes(img_np):
     bg_wo_holes_indices = []
     # The get_shape always starts by finding the shape that contains the last
     # point in the image array, the outermost background shape
-    bg_wo_holes = len(shape[0])
+    bg_wo_holes = len(bg_shapes[0])
 
     # Find the outer background shape
     # for i, shape in enumerate(bg_shapes):

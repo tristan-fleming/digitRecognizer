@@ -33,3 +33,13 @@ def plot_confusion_matrices(confusion_matrices, name):
         ax.grid(False)
         fig.savefig("classification/{0}_classifier_num{1}_confusionMx.png".format(name, i))
         plt.close()
+
+
+def plot_digits(digits, nrows, ncols, file_name_str):
+    f, axes = plt.subplots(nrows, ncols)
+    for i in range(nrows):
+        for j in range(ncols):
+            axes[i, j].imshow(digits[i*ncols + j])
+            axes[i, j].axis('off')
+    plt.tight_layout(pad=-0.2, w_pad=-2, h_pad=-2)
+    f.savefig("digits_examples_{0}.png".format(file_name_str))

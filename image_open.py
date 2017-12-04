@@ -5,6 +5,8 @@ import gzip
 import numpy as np
 from skimage.transform import rotate
 
+import simple_preprocess as sp
+
 
 def read_image(filename):
     '''Reads image file, plots the image, and returns numpy array of pixel
